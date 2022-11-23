@@ -1,11 +1,6 @@
 ﻿#WinActivateForce
-#SingleInstance, Force
-SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode, 3
 SendMode, Input
-; SetKeyDelay, 20              can be used instead of global sleep delay
-; SetMouseDelay, 20
-; SetDefaultMouseSpeed, 0
 
 global iniFile := A_ScriptDir . "\Configs.ini"
 
@@ -45,6 +40,27 @@ loadConfigs(){
         delay := iniDelay
 }
 
+chkButton(btn)
+{
+    Loop, {
+        if A_Index > 30 ; tries 30 times for 100ms each: 3s
+        {    
+            MsgBox, Couldn't find %btn%! Aborting...
+            return 0
+        }
+            
+        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/%btn%
+        if ErrorLevel = 0
+        {
+            nbtn := RTrim(btn, ".png")
+            IniWrite, %X% %Y%, %iniFile%, Macro, %nbtn%
+            Click, %X% %Y%
+            return 1
+        }
+        Sleep, 100
+    }
+}
+
 setUp()
 {
     ; Test if minecraft is open
@@ -57,7 +73,7 @@ setUp()
     }
 
     ; checks if PNGs exists
-    imgFiles := ["CreateNewWorld.png", "CreateNew.png", "Easy.png", "Quit.png", "SimDis.png", "Coords.png", "Create.png", "Seed.png"]
+    imgFiles := ["CreateNew.png", "CreateNewWorld.png", "Easy.png", "Coords.png", "SimDis.png", "Seed.png", "Create.png", "Heart.png","Quit.png"]
     For i, file in imgFiles
     {
         if !FileExist(A_ScriptDir . "\assets\" . file)
@@ -68,129 +84,15 @@ setUp()
     }
     
     ; button checks
-    Sleep, 1000
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each: 2s
-        {    
-            MsgBox, Couldn't find CreateNew.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/CreateNew.png
-        if ErrorLevel = 0
+    btnFiles := ["CreateNew.png", "CreateNewWorld.png", "Easy.png", "Coords.png", "SimDis.png", "Seed.png", "Create.png"]
+    For i, btn in btnFiles
+    {
+        if !chkButton(btn)
         {
-            IniWrite, %X% %Y%, %iniFile%, Macro, CreateNew
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
+            MsgBox, Couldn't find %btn%! Aborting...
+            return
+        }    
     }
-    Sleep, 500
 
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each: 2s
-        {    
-            MsgBox, Couldn't find CreateNewWorld.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/CreateNewWorld.png
-        if ErrorLevel = 0
-        {
-            IniWrite, %X% %Y%, %iniFile%, Macro, CreateNewWorld
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
-    }
-    Sleep, 1000
-
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each
-        {    
-            MsgBox, Couldn't find Easy.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/Easy.png
-        if ErrorLevel = 0
-        {
-            IniWrite, %X% %Y%, %iniFile%, Macro, Easy
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
-    }
-    Sleep, 500
-
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each
-        {    
-            MsgBox, Couldn't find Coords.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/Coords.png
-        if ErrorLevel = 0
-        {
-            IniWrite, %X% %Y%, %iniFile%, Macro, Coords
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
-    }
-    Sleep, 500
-
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each
-        {    
-            MsgBox, Couldn't find SimDis.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/SimDis.png
-        if ErrorLevel = 0
-        {
-            IniWrite, %X% %Y%, %iniFile%, Macro, SimDis
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
-    }
-    Sleep, 500
-
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each: 2s
-        {    
-            MsgBox, Couldn't find Seed.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/Seed.png
-        if ErrorLevel = 0
-        {
-            IniWrite, %X% %Y%, %iniFile%, Macro, Seed
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
-    }
-    Sleep, 500
-
-    Loop, {
-        if A_Index > 20 ; tries 20 times for 100ms each
-        {    
-            MsgBox, Couldn't find Create.png! Aborting...
-            return
-        }
-            
-        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/Create.png
-        if ErrorLevel = 0
-        {
-            IniWrite, %X% %Y%, %iniFile%, Macro, Create
-            Click, %X% %Y%
-            Break
-        }
-        Sleep, 100
-    }
+    MsgBox, Success!
 }
