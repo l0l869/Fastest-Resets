@@ -1,38 +1,36 @@
 ﻿; this code is bad but it'll do for now
 
+#Include ClassMem.ahk
+
 SetTitleMatchMode, 3
 global Minecraft
 global DynPtrBaseAddr := 0
 global xCoord := 0
 return
 
-#IfWinExist, Minecraft
-
 resetInGame:
     IfWinNotExist, Minecraft
     {
-        MsgBox,4,, Minecraft is not open, Do you want to Launch?
+        MsgBox,4,, Minecraft is not open, do you want to launch?
         IfMsgBox, Yes
-            RestartMinecraft()
+            Gosub, RestartMC
         return
     }
-    IniRead, selectedSeed, %iniFile%, Settings, seedSelected
-    Minecraft := "" ; close handle of old mc
-    Minecraft := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-    DynPtrBaseAddr := Minecraft.baseAddress + 0x0369D0A8 ;ptr to xcoords
+    IfWinActive, Minecraft
+    {
+        IniRead, selectedSeed, %iniFile%, Settings, seedSelected
+        Minecraft := "" ; close handle of old mc
+        Minecraft := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+        DynPtrBaseAddr := Minecraft.baseAddress + 0x0369D0A8 ;ptr to xcoords
 
-    inGameReset()
+        inGameReset()
+    }
 return
 
 restartMC:
-    RestartMinecraft()
-Return
-
-RestartMinecraft()
-{
     WinClose, Minecraft
     Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
-}
+Return
 
 findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080)
 {
