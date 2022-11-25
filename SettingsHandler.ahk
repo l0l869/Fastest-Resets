@@ -3,6 +3,8 @@ SetTitleMatchMode, 3
 SendMode, Input
 
 global iniFile := A_ScriptDir . "\Configs.ini"
+EnvGet, A_LocalAppData, LocalAppData
+global mcDir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 
 loadConfigs(){
     FileRead, tmplist, Seeds.txt

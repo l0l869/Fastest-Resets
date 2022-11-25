@@ -31,7 +31,7 @@ Gui, add, Button, x145 y90 w120 h20 vEditHotkeysButton gEditHotkeys, Edit Hotkey
 Gui, add, Text, x150 y150, Delay
 Gui, add, Edit, x150 y165 w30 vDelayEdit gDelayEdit +Number -Multi
 
-Gui, add, Button, x15 y125 w120 h20 gInstallPack, Install Resource Pack 
+Gui, add, Button, x15 y125 w120 h20 gInstallResetPack, Install Resource Pack 
 Gui, add, Button, x15 y150 w120 h40 vSetupButton gSetup, Set-up
 
 loadConfigs()
@@ -40,8 +40,15 @@ loadConfigs()
 
 ; buttons
 
-InstallPack:
-
+InstallResetPack:
+    if FileExist(mcDir . "\resource_packs\FastestRes")  ; automatic update pack soon
+    {
+        MsgBox, Fastest Resets Pack already imported.
+    }
+    Else
+    {
+        Run, Assets\MC Resources\Fastest Resets.mcpack
+    }
 return
 
 EditHotkeys:
