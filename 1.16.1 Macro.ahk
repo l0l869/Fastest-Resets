@@ -2,12 +2,12 @@
 #SingleInstance, Force
 #Include SettingsHandler.ahk
 
-Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetHotkey, RestartMCHotkey, EditHotkeysButton, DelayEdit
+Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetHotkey, RestartMCHotkey, DelayEdit
 Global delay, setSeed, selectedSeed, autoReset, maxCoords, minCoords
 
 Gui, MainWin:Default
 Gui, -MaximizeBox
-Gui, Show, w420 h200, Minecraft Reseter
+Gui, Show, w420 h200, Minecraft Resetter
 Gui, Color, FFFFFF
 Gui, Font, s8, Arial
 
@@ -26,13 +26,15 @@ Gui, add, Hotkey, x145 y20 vResetHotkey +Disabled
 Gui, add, Hotkey, x145 y60 vRestartMCHotkey +Disabled
 Gui, add, Text, x145 y5,Reset Key
 Gui, add, Text, x145 y45,Restart MC Key
-Gui, add, Button, x145 y90 w120 h20 vEditHotkeysButton gEditHotkeys, Edit Hotkeys
+Gui, add, Button, x145 y90 w120 h20 gEditHotkeys, Edit Hotkeys
 
 Gui, add, Text, x150 y150, Delay
-Gui, add, Edit, x150 y165 w30 vDelayEdit gDelayEdit +Number -Multi
+Gui, add, Edit, x150 y166 w30 vDelayEdit gDelayEdit +Number -Multi
 
 Gui, add, Button, x15 y125 w120 h20 gInstallResetPack, Install Resource Pack 
 Gui, add, Button, x15 y150 w120 h40 vSetupButton gSetup, Set-up
+
+Gui, add, Button, x150 y125 h20 gOpenMCDir, MC Dir
 
 loadConfigs()
 
@@ -47,8 +49,12 @@ InstallResetPack:
     }
     Else
     {
-        Run, Assets\MC Resources\Fastest Resets.mcpack
+        Run, Assets\MC Resources\FastestResets.mcpack
     }
+return
+
+OpenMCDir: 
+    run, %mcDir%
 return
 
 EditHotkeys:
