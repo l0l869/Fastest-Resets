@@ -40,6 +40,9 @@ loadConfigs(){
     IniRead, iniDelay, %iniFile%, Settings, globalDelay
         GuiControl,, DelayEdit, %iniDelay%
         delay := iniDelay
+
+    nw := ComObjCreate("Shell.Application").NameSpace(mcDir . "\minecraftWorlds").Items.Count
+        GuiControl,, worldsText, #Worlds: %nw%
 }
 
 chkButton(btn)

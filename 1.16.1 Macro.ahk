@@ -2,7 +2,7 @@
 #SingleInstance, Force
 #Include SettingsHandler.ahk
 
-Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetHotkey, RestartMCHotkey, DelayEdit
+Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
 Global delay, setSeed, selectedSeed, autoReset, maxCoords, minCoords
 
 Gui, MainWin:Default
@@ -34,7 +34,10 @@ Gui, add, Edit, x150 y166 w30 vDelayEdit gDelayEdit +Number -Multi
 Gui, add, Button, x15 y125 w120 h20 gInstallResetPack, Install Resource Pack 
 Gui, add, Button, x15 y150 w120 h40 vSetupButton gSetup, Set-up
 
-Gui, add, Button, x150 y125 h20 gOpenMCDir, MC Dir
+Gui, add, Button, x150 y125 h20 gOpenMCDir, MC Directory
+
+Gui, add, Text, vworldsText w100 x300 y125, #Worlds: -
+Gui, add, Text, vattemptsText w100 x300 y140, #Attempts: -
 
 loadConfigs()
 
@@ -49,7 +52,7 @@ InstallResetPack:
     }
     Else
     {
-        Run, Assets\MC Resources\FastestResets.mcpack
+        Run, Assets\MC-Resources\FastestResets.mcpack
     }
 return
 
