@@ -41,7 +41,7 @@ Gui, add, Text, vattemptsText w100 x300 y140, #Attempts: -
 
 loadConfigs()
 
-#Include Reseter.ahk
+#Include Resetter.ahk
 
 ; buttons
 
