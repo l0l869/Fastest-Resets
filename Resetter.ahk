@@ -1,6 +1,4 @@
-﻿; this code is bad but it'll do for now
-
-#Include ClassMem.ahk
+﻿#Include ClassMem.ahk
 
 SetTitleMatchMode, 3
 global Minecraft
@@ -41,13 +39,12 @@ findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080)
             Click, %X% %Y%
             return 1
         }
-        Sleep, 1
-
         if A_Index > 200
         {
             MsgBox, Couldn't find %btn%, try doing setup to calibrate
             return 0
         }
+        Sleep, 1
     }
 }
 
@@ -105,27 +102,26 @@ inGameReset()
 
         Sleep, 1500
         Loop, {
-            ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], A_ScreenWidth, A_ScreenWidth , assets/Heart.png
+            ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+64, boundsBtn[2]+64 , assets/Heart.png
             if ErrorLevel = 0
                 break
                 
-            if A_Index = 100 ; redefines heart bounds if current doesnt meet
+            if A_Index = 150 ; redefines heart bounds if current doesnt meet
             {
                 boundsBtn := [0,0]
             }
 
-            if A_Index > 200
+            if A_Index > 250
             {
                 MsgBox, Couldn't detect in world
                 return
             }
         }
+        IniWrite, %X% %Y%, %iniFile%, Macro, Heart
         xCoord := Minecraft.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
             else
                 SoundBeep, 1000
-
-        IniWrite, %X% %Y%, %iniFile%, Macro, Heart
     }
 }
