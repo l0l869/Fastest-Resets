@@ -99,5 +99,30 @@ setUp()
         }    
     }
 
+    ; exiting world test
+    Sleep, 2000
+    Loop, {
+        ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/Heart.png
+        if ErrorLevel = 0
+        {
+            IniWrite, %X% %Y%, %iniFile%, Macro, Heart
+            break
+        }
+
+        if A_Index > 250
+        {
+            MsgBox, Couldn't detect in world, Aborting...
+            return
+        }
+        Sleep, 1
+    }
+
+    Send, {Esc}
+    if !chkButton("Quit.png")
+    {
+        MsgBox, Couldn't find "Quit.png"! Aborting...
+        return
+    }
+
     MsgBox, Success!
 }
