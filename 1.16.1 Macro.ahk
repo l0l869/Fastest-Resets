@@ -113,7 +113,7 @@ GuiControlGet inSeed,, SeedEdit
  {
     if inSeed != ""
     {   
-        FileAppend, "|"%inSeed%, Seeds.txt
+        FileAppend, "|"%inSeed%, configs\Seeds.txt
         tmplist .= "|"inSeed
         GuiControl,,SeedList, %tmplist%
         GuiControl,,SeedEdit, 
@@ -143,7 +143,7 @@ return
 
 SeedChange:
     GuiControlGet, sSeed,, SeedList
-        IniWrite, %sSeed%, %iniFile%, Settings, seedSelected
+        IniWrite, %sSeed%, %iniFile%, Settings, selectedSeed
 return
 
 

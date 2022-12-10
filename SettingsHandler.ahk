@@ -2,13 +2,13 @@
 SetTitleMatchMode, 3
 SendMode, Input
 
-global iniFile := A_ScriptDir . "\Configs.ini"
+global iniFile := A_ScriptDir . "\configs\Configs.ini"
 EnvGet, A_LocalAppData, LocalAppData
 global mcDir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 
 loadConfigs(){
-    FileRead, tmplist, Seeds.txt
-    IniRead, sSeed, %iniFile%, Settings, seedSelected
+    FileRead, tmplist, configs\Seeds.txt
+    IniRead, sSeed, %iniFile%, Settings, selectedSeed
     tmplist := StrReplace(tmplist, sSeed, "") ;remove dupe seed
         GuiControl,, SeedList, %tmplist%|%sSeed%||
 
@@ -78,7 +78,7 @@ setUp()
     }
 
     ; checks if PNGs exists
-    imgFiles := ["CreateNew.png", "CreateNewWorld.png", "Easy.png", "Coords.png", "SimDis.png", "Seed.png", "Create.png", "Heart.png","Quit.png"]
+    imgFiles := ["CreateNew.png", "CreateNewWorld.png", "Easy.png", "Coords.png", "SimDis.png", "Seed.png", "Create.png", "Heart.png", "Quit.png"]
     For i, file in imgFiles
     {
         if !FileExist(A_ScriptDir . "\assets\" . file)

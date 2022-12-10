@@ -4,7 +4,7 @@ SetTitleMatchMode, 3
 global Minecraft
 global DynPtrBaseAddr := 0
 global xCoord := 0
-return
+Exit
 
 resetInGame:
     IfWinNotExist, Minecraft
@@ -16,7 +16,7 @@ resetInGame:
     }
     IfWinActive, Minecraft
     {
-        IniRead, selectedSeed, %iniFile%, Settings, seedSelected
+        IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Minecraft := "" ; close handle of old mc
         Minecraft := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
         DynPtrBaseAddr := Minecraft.baseAddress + 0x0369D0A8 ;ptr to xcoords
@@ -105,7 +105,7 @@ inGameReset()
             ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+64, boundsBtn[2]+64 , assets/Heart.png
             if ErrorLevel = 0
                 break
-                
+
             if A_Index = 150 ; redefines heart bounds if current doesnt meet
             {
                 boundsBtn := [0,0]
