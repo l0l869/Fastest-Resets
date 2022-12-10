@@ -101,15 +101,18 @@ setUp()
 
     ; exiting world test
     Sleep, 2000
+    worldGenStart := A_TickCount - 2000
     Loop, {
         ImageSearch, X, Y, 0, 0, A_ScreenWidth, A_ScreenHeight, assets/Heart.png
         if ErrorLevel = 0
         {
+            worldGenTime := A_TickCount - worldGenStart
+            IniWrite, %worldGenTime%, %iniFile%, Macro, worldGenTime
             IniWrite, %X% %Y%, %iniFile%, Macro, Heart
             break
         }
 
-        if A_Index > 250
+        if A_Index > 650 ; about 10s
         {
             MsgBox, Couldn't detect in world, Aborting...
             return

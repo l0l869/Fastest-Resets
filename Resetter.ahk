@@ -100,24 +100,20 @@ inGameReset()
         IniRead, cn, %iniFile%, Macro, Heart
         boundsBtn := StrSplit(cn, A_Space)
 
-        Sleep, 1500
+        IniRead, worldGenTimeSleep, %iniFile%, Macro, WorldGenTime
+        Sleep, worldGenTimeSleep - 1000
+        
         Loop, {
-            ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+64, boundsBtn[2]+64 , assets/Heart.png
+            ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+2, boundsBtn[2]+2, assets/Heart.png
             if ErrorLevel = 0
                 break
 
-            if A_Index = 150 ; redefines heart bounds if current doesnt meet
-            {
-                boundsBtn := [0,0]
-            }
-
-            if A_Index > 250
+            if A_Index > 1000 ; about 5s
             {
                 MsgBox, Couldn't detect in world
                 return
             }
         }
-        IniWrite, %X% %Y%, %iniFile%, Macro, Heart
         xCoord := Minecraft.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
