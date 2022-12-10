@@ -21,7 +21,7 @@ A Macro for MCBE Speedrunning that makes reseting easier and faster
 
 
 ## Aditional Info
-* Keep the delay at a minimum of 25ms for verification purposes
+* Keep the delay at a minimum of 35ms for verification purposes
 
 * Make sure when taking screenshots the buttons aren't highlighed green
 
