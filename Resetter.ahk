@@ -30,26 +30,9 @@ restartMC:
     Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
 Return
 
-findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080)
-{
-    Loop, {
-        ImageSearch, X, Y, bx, by, bx+dx, by+dy, assets/%btn%.png
-        if ErrorLevel = 0
-        {
-            Click, %X% %Y%
-            return 1
-        }
-        if A_Index > 200
-        {
-            MsgBox, Couldn't find %btn%, try doing setup to calibrate
-            return 0
-        }
-        Sleep, 1
-    }
-}
-
 inGameReset()
 {
+    updateAttempts()
     MouseGetPos, prevX, prevY
     Send, {Esc}
     if !findButton("Quit")
@@ -60,27 +43,27 @@ inGameReset()
     boundsBtn := StrSplit(cn, A_Space)
     if !findButton("CreateNew", boundsBtn[1], boundsBtn[2], 500, 500)
         return
-    Sleep, %delay%
+    Sleep, %keyDelay%
 
     IniRead, cn, %iniFile%, Macro, CreateNewWorld
     boundsBtn := StrSplit(cn, A_Space)
     if !findButton("CreateNewWorld", boundsBtn[1], boundsBtn[2], 750, 500)
         return
-    Sleep, %delay%
+    Sleep, %keyDelay%
 
     IniRead, cn, %iniFile%, Macro, Easy
     boundsBtn := StrSplit(cn, A_Space)
     if !findButton("Easy", boundsBtn[1], boundsBtn[2], 400, 400)
         return
-    Sleep, %delay%
+    Sleep, %keyDelay%
 
     IniRead, cn, %iniFile%, Macro, Coords
     Click, %cn%                     ;Coords
-    Sleep, %delay%
+    Sleep, %keyDelay%
 
     IniRead, cn, %iniFile%, Macro, SimDis
     Click, %cn%                     ;SimDis
-    Sleep, %delay%
+    Sleep, %keyDelay%
 
     if setSeed
     {
@@ -88,7 +71,7 @@ inGameReset()
         Click, %cn%                 ;Seed
         Sleep, 1
         Send, %selectedSeed%
-        Sleep, %delay%
+        Sleep, %keyDelay%
     }
 
     IniRead, cn, %iniFile%, Macro, Create
@@ -120,4 +103,37 @@ inGameReset()
             else
                 SoundBeep, 1000
     }
+}
+
+findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080)
+{
+    Loop, {
+        ImageSearch, X, Y, bx, by, bx+dx, by+dy, assets/%btn%.png
+        if ErrorLevel = 0
+        {
+            Click, %X% %Y%
+            return 1
+        }
+        if A_Index > 200
+        {
+            MsgBox, Couldn't find %btn%, try doing setup to calibrate
+            return 0
+        }
+        Sleep, 1
+    }
+}
+
+updateAttempts(amount := 1)
+{
+    txt := FileOpen("configs/attempts.txt", "r") ; open/reads txt
+    attempts := txt.Read() + amount
+    if amount
+    {
+        txt := FileOpen("configs/attempts.txt", "w") ; overwrites txt
+        txt.Write(attempts)
+    }
+    txt.Close()
+    
+    GuiControl,, attemptsText, #Attempts: %attempts%
+    return attempts
 }

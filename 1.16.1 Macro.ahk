@@ -3,7 +3,7 @@
 #Include SettingsHandler.ahk
 
 Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
-Global delay, setSeed, selectedSeed, autoReset, maxCoords, minCoords
+Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords
 
 Gui, MainWin:Default
 Gui, -MaximizeBox
@@ -18,14 +18,14 @@ Gui, add, Checkbox, vSeedCheck gSeedCheck, Set Seed
 
 Gui, add, Edit, x320 y10 w90 vMaxCoordsEdit gMaxCoordsEdit +Number -Multi
 Gui, add, Edit, x320 y35 w90 vMinCoordsEdit gMinCoordsEdit +Number -Multi
-Gui, add, Text, x290 y15,xMax
-Gui, add, Text, x290 y40,xMin
+Gui, add, Text, x290 y15, xMax
+Gui, add, Text, x290 y40, xMin
 Gui, add, Checkbox, vAutoCheck gAutoCheck, Auto Reset
 
 Gui, add, Hotkey, x145 y20 vResetHotkey +Disabled
 Gui, add, Hotkey, x145 y60 vRestartMCHotkey +Disabled
-Gui, add, Text, x145 y5,Reset Key
-Gui, add, Text, x145 y45,Restart MC Key
+Gui, add, Text, x145 y5, Reset Key
+Gui, add, Text, x145 y45, Restart MC Key
 Gui, add, Button, x145 y90 w120 h20 gEditHotkeys, Edit Hotkeys
 
 Gui, add, Text, x150 y150, Delay
@@ -124,9 +124,9 @@ return
 ; edits, checkboxes
 
 DelayEdit:
-    GuiControlGet, d,, DelayEdit
-        IniWrite, %d%, %iniFile%, Settings, globalDelay
-        delay := d
+    GuiControlGet, inputDelay,, DelayEdit
+        IniWrite, %inputDelay%, %iniFile%, Settings, keyDelay
+        keyDelay := inputDelay
 return
 
 MaxCoordsEdit:

@@ -8,9 +8,9 @@ global mcDir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\L
 
 loadConfigs(){
     FileRead, tmplist, configs\Seeds.txt
-    IniRead, sSeed, %iniFile%, Settings, selectedSeed
-    tmplist := StrReplace(tmplist, sSeed, "") ;remove dupe seed
-        GuiControl,, SeedList, %tmplist%|%sSeed%||
+    IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
+    tmplist := StrReplace(tmplist, selectedSeed, "") ;remove dupe seed
+        GuiControl,, SeedList, %tmplist%|%selectedSeed%||
 
     IniRead, stateSeed, %iniFile%, Settings, setSeed
     If stateSeed = true
@@ -37,12 +37,14 @@ loadConfigs(){
         GuiControl,, RestartMCHotkey, %key%
         Hotkey, %key%, restartMC
 
-    IniRead, iniDelay, %iniFile%, Settings, globalDelay
-        GuiControl,, DelayEdit, %iniDelay%
-        delay := iniDelay
+    IniRead, iniKeyDelay, %iniFile%, Settings, keyDelay
+        GuiControl,, DelayEdit, %iniKeyDelay%
+        keyDelay := iniKeyDelay
 
-    nw := ComObjCreate("Shell.Application").NameSpace(mcDir . "\minecraftWorlds").Items.Count
-        GuiControl,, worldsText, #Worlds: %nw%
+    worldCount := ComObjCreate("Shell.Application").NameSpace(mcDir . "\minecraftWorlds").Items.Count
+        GuiControl,, worldsText, #Worlds: %worldCount%
+
+    updateAttempts(0)
 }
 
 chkButton(btn)
