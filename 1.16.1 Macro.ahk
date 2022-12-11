@@ -2,8 +2,8 @@
 #SingleInstance, Force
 #Include SettingsHandler.ahk
 
-Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
-Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords
+Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetThresholdEdit, AutoRestartCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
+Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords, autoRestart, resetThreshold
 
 Gui, MainWin:Default
 Gui, -MaximizeBox
@@ -27,6 +27,9 @@ Gui, add, Edit, x320 y35 w90 vMinCoordsEdit gMinCoordsEdit +Number -Multi
 Gui, add, Text, x290 y15, xMax
 Gui, add, Text, x290 y40, xMin
 Gui, add, Checkbox, vAutoCheck gAutoCheck, Auto Reset
+
+Gui, add, Edit, x210 y145 w25 gResetThresholdEdit vResetThresholdEdit +Number -Multi
+Gui, add, Checkbox, x185 y170 vAutoRestartCheck gAutoRestartCheck, Auto Restart
 
 Gui, add, Text, x145 y150, Delay
 Gui, add, Edit, x145 y166 w30 Center vDelayEdit gDelayEdit +Number -Multi
@@ -128,6 +131,28 @@ DelayEdit:
     GuiControlGet, inputDelay,, DelayEdit
         IniWrite, %inputDelay%, %iniFile%, Settings, keyDelay
         keyDelay := inputDelay
+return
+
+ResetThresholdEdit:
+    GuiControlGet, iniResetThreshold,, ResetThresholdEdit
+        IniWrite, %iniResetThreshold%, %iniFile%, Settings, resetThreshold
+        resetThreshold := iniResetThreshold
+return
+
+AutoRestartCheck:
+    GuiControlGet, state,, AutoRestartCheck
+    if state = 1
+    {
+        IniWrite, true, %iniFile%, Settings, autoRestart
+        autoRestart := true
+        GuiControl, Enable, ResetThresholdEdit
+    }
+    Else
+    {
+        IniWrite, false, %iniFile%, Settings, autoRestart
+        autoRestart := false
+        GuiControl, Disable, ResetThresholdEdit
+    }   
 return
 
 MaxCoordsEdit:

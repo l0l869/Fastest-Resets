@@ -4,6 +4,7 @@ SetTitleMatchMode, 3
 global Minecraft
 global DynPtrBaseAddr := 0
 global xCoord := 0
+global lastRestart
 Exit
 
 resetInGame:
@@ -28,11 +29,15 @@ return
 restartMC:
     WinClose, Minecraft
     Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
+    lastRestart := updateAttempts(0)
 Return
 
 inGameReset()
 {
-    updateAttempts()
+    attemptsCount := updateAttempts()
+    if autoRestart
+        shouldRestart(attemptsCount)
+
     MouseGetPos, prevX, prevY
     Send, {Esc}
     if !findButton("Quit")
@@ -117,6 +122,7 @@ findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080)
         if A_Index > 200
         {
             MsgBox, Couldn't find %btn%, try doing setup to calibrate
+            updateAttempts(-1)
             return 0
         }
         Sleep, 1
@@ -127,7 +133,7 @@ updateAttempts(amount := 1)
 {
     txt := FileOpen("configs/attempts.txt", "r") ; open/reads txt
     attempts := txt.Read() + amount
-    if amount
+    if amount != 0
     {
         txt := FileOpen("configs/attempts.txt", "w") ; overwrites txt
         txt.Write(attempts)
@@ -136,4 +142,20 @@ updateAttempts(amount := 1)
     
     GuiControl,, attemptsText, #Attempts: %attempts%
     return attempts
+}
+
+shouldRestart(resetCounter)
+{
+    if !lastRestart
+    {
+        lastRestart := resetCounter
+        return false
+    }
+
+    if (resetCounter >= lastRestart + resetThreshold)
+    {
+        updateAttempts(-1)
+        Gosub, RestartMC ;lastRestart redefines 
+        Exit
+     }
 }

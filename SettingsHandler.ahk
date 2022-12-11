@@ -28,7 +28,14 @@ loadConfigs(){
     IniRead, minC, %iniFile%, Settings, minCoords
         GuiControl,, MinCoordsEdit, %minC%
         
-        
+    IniRead, stateAutoRestart, %iniFile%, Settings, autoRestart
+    If stateAutoRestart = true
+        GuiControl,, AutoRestartCheck, 1
+    Gosub AutoRestartCheck
+
+    IniRead, iniResetThreshold, %iniFile%, Settings, resetThreshold
+        GuiControl,, ResetThresholdEdit, %iniResetThreshold%
+
     IniRead, key, %iniFile%, Hotkeys, Reset
         GuiControl,, ResetHotkey, %key%
         Hotkey, %key%, resetInGame
