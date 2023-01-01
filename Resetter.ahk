@@ -17,10 +17,9 @@ resetInGame:
     }
     IfWinActive, Minecraft
     {
-        IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Minecraft := "" ; close handle of old mc
         Minecraft := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-        DynPtrBaseAddr := Minecraft.baseAddress + 0x0369D0A8 ;ptr to xcoords
+        DynPtrBaseAddr := Minecraft.baseAddress + 0x0369D0A8 ;ptr to player's x coords
 
         inGameReset()
     }
@@ -40,68 +39,56 @@ inGameReset()
 
     MouseGetPos, prevX, prevY
     Send, {Esc}
-    if !findButton("Quit")
-        return
+    findButton("Quit")
     Sleep, 1500
 
-    IniRead, cn, %iniFile%, Macro, CreateNew
-    boundsBtn := StrSplit(cn, A_Space)
-    if !findButton("CreateNew", boundsBtn[1], boundsBtn[2], 500, 500)
-        return
+    IniRead, iniBtn, %iniFile%, Macro, CreateNew
+    boundsBtn := StrSplit(iniBtn, A_Space)
+    findButton("CreateNew", boundsBtn[1], boundsBtn[2], 500, 500)
     Sleep, %keyDelay%
 
-    IniRead, cn, %iniFile%, Macro, CreateNewWorld
-    boundsBtn := StrSplit(cn, A_Space)
-    if !findButton("CreateNewWorld", boundsBtn[1], boundsBtn[2], 750, 500)
-        return
+    IniRead, iniBtn, %iniFile%, Macro, CreateNewWorld
+    boundsBtn := StrSplit(iniBtn, A_Space)
+    findButton("CreateNewWorld", boundsBtn[1], boundsBtn[2], 750, 500)
     Sleep, %keyDelay%
 
-    IniRead, cn, %iniFile%, Macro, Easy
-    boundsBtn := StrSplit(cn, A_Space)
-    if !findButton("Easy", boundsBtn[1], boundsBtn[2], 400, 400)
-        return
+    IniRead, iniBtn, %iniFile%, Macro, Easy
+    boundsBtn := StrSplit(iniBtn, A_Space)
+    findButton("Easy", boundsBtn[1], boundsBtn[2], 400, 400)
     Sleep, %keyDelay%
 
-    IniRead, cn, %iniFile%, Macro, Coords
-    Click, %cn%                     ;Coords
+    IniRead, iniBtn, %iniFile%, Macro, Coords
+    Click, %iniBtn%                     ;Coords
     Sleep, %keyDelay%
 
-    IniRead, cn, %iniFile%, Macro, SimDis
-    Click, %cn%                     ;SimDis
+    IniRead, iniBtn, %iniFile%, Macro, SimDis
+    Click, %iniBtn%                     ;SimDis
     Sleep, %keyDelay%
 
     if setSeed
     {
-        IniRead, cn, %iniFile%, Macro, Seed
-        Click, %cn%                 ;Seed
+        IniRead, iniBtn, %iniFile%, Macro, Seed
+        Click, %iniBtn%                 ;Seed
         Sleep, 1
+        IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Send, %selectedSeed%
         Sleep, %keyDelay%
     }
 
-    IniRead, cn, %iniFile%, Macro, Create
-    Click, %cn%                     ;Create
+    IniRead, iniBtn, %iniFile%, Macro, Create
+    Click, %iniBtn%                     ;Create
     MouseMove, %prevX%, %prevY%
 
     if autoReset
     {
-        IniRead, cn, %iniFile%, Macro, Heart
-        boundsBtn := StrSplit(cn, A_Space)
+        IniRead, iniBtn, %iniFile%, Macro, Heart
+        boundsBtn := StrSplit(iniBtn, A_Space)
 
         IniRead, worldGenTimeSleep, %iniFile%, Macro, WorldGenTime
-        Sleep, worldGenTimeSleep - 1000
+        Sleep, worldGenTimeSleep - 1000 ; -1000: incase world loads faster than expected
         
-        Loop, {
-            ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+2, boundsBtn[2]+2, assets/Heart.png
-            if ErrorLevel = 0
-                break
+        findButton("Heart", boundsBtn[1], boundsBtn[2], 2, 2, 1000, -1, false)
 
-            if A_Index > 1000 ; about 5s
-            {
-                MsgBox, Couldn't detect in world
-                return
-            }
-        }
         xCoord := Minecraft.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
@@ -110,22 +97,23 @@ inGameReset()
     }
 }
 
-findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080)
+findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080, attempts := 200, findDelay := 1, doClick := true)
 {
     Loop, {
-        ImageSearch, X, Y, bx, by, bx+dx, by+dy, assets/%btn%.png
-        if ErrorLevel = 0
-        {
-            Click, %X% %Y%
-            return 1
-        }
-        if A_Index > 200
+        if A_Index > %attempts%
         {
             MsgBox, Couldn't find %btn%, try doing setup to calibrate
             updateAttempts(-1)
-            return 0
+            Exit
         }
-        Sleep, 1
+        ImageSearch, X, Y, bx, by, bx+dx, by+dy, assets/%btn%.png
+        if ErrorLevel = 0
+        {
+            if doClick
+                Click, %X% %Y%
+            return 1
+        }
+        Sleep, %findDelay%
     }
 }
 
@@ -140,7 +128,7 @@ updateAttempts(amount := 1)
     }
     txt.Close()
     
-    GuiControl,, attemptsText, #Attempts: %attempts%
+    GuiControl,, attemptsText, #Attempts: %attempts% ; doesnt update if win isnt active
     return attempts
 }
 

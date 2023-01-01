@@ -2,7 +2,7 @@
 #SingleInstance, Force
 #Include SettingsHandler.ahk
 
-Global AddSeedButton, SeedEdit, SeedList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetThresholdEdit, AutoRestartCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
+Global AddSeedButton, SeedEdit, SeedDropDownList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetThresholdEdit, AutoRestartCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
 Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords, autoRestart, resetThreshold
 
 Gui, MainWin:Default
@@ -19,7 +19,7 @@ Gui, add, Button, x10 y90 w120 h20 gEditHotkeys, Edit Hotkeys
 
 Gui, add, Button, x145 y10 w120 h20 gAddSeed vAddSeedButton, Add Seed
 Gui, add, Edit, x145 y35 vSeedEdit +Number -Multi
-Gui, add, DropdownList, x145 y65 vSeedList gSeedChange
+Gui, add, DropdownList, x145 y65 vSeedDropDownList gSeedChange
 Gui, add, Checkbox, x145 y95 vSeedCheck gSeedCheck, Set Seed
 
 Gui, add, Edit, x320 y10 w90 vMaxCoordsEdit gMaxCoordsEdit +Number -Multi
@@ -72,11 +72,11 @@ EditHotkeys:
     Gui, hotkeysWin:add, Text, x10 y50,Restart MC Key
     Gui, hotkeysWin:add, Button, x10 y100 w130 h30 gSaveHotkeys,Save
 
-    IniRead, key, %iniFile%, Hotkeys, Reset
-        GuiControl,hotkeysWin:, rKey, %key%
+    IniRead, iniKey, %iniFile%, Hotkeys, Reset
+        GuiControl,hotkeysWin:, rKey, %iniKey%
 
-    IniRead, key, %iniFile%, Hotkeys, RestartMinecraft
-        GuiControl,hotkeysWin:, rmcKey, %key%
+    IniRead, iniKey, %iniFile%, Hotkeys, RestartMinecraft
+        GuiControl,hotkeysWin:, rmcKey, %iniKey%
 return
 
 SaveHotkeys:
@@ -106,31 +106,35 @@ Setup:
     {
         Run, %A_ScriptDir%\assets
         Sleep, 1000
-        MsgBox, Windows Key + Shift + S, to screenshot buttons with their corresponding file name like the examples provided
+        MsgBox, Windows Key + Shift + S, to screenshot buttons with their corresponding file name like the examples provided.
     }
 return
 
 AddSeed:
-GuiControlGet inSeed,, SeedEdit
+    GuiControlGet inputtedSeed,, SeedEdit
+    FileRead, seedList, configs\Seeds.txt
 
- IfNotInString, tmplist, %inSeed%
- {
-    if inSeed != ""
-    {   
-        FileAppend, "|"%inSeed%, configs\Seeds.txt
-        tmplist .= "|"inSeed
-        GuiControl,,SeedList, %tmplist%
-        GuiControl,,SeedEdit, 
+    if !inputtedSeed
+    {
+        MsgBox, Invalid input!
     }
-}
+
+    if InStr(seedList, inputtedSeed)    ; this is bad, for instance: "12" is in "551255"
+        MsgBox, %inputtedSeed% is already in seed list!
+    Else
+    {
+        FileAppend, |%inputtedSeed%, configs\Seeds.txt
+        GuiControl,, SeedDropDownList, %inputtedSeed% ; weird
+        GuiControl,, SeedEdit
+    }
 return
 
 ; edits, checkboxes
 
 DelayEdit:
-    GuiControlGet, inputDelay,, DelayEdit
-        IniWrite, %inputDelay%, %iniFile%, Settings, keyDelay
-        keyDelay := inputDelay
+    GuiControlGet, valueDelayEdit,, DelayEdit
+        IniWrite, %valueDelayEdit%, %iniFile%, Settings, keyDelay
+        keyDelay := valueDelayEdit
 return
 
 ResetThresholdEdit:
@@ -156,20 +160,21 @@ AutoRestartCheck:
 return
 
 MaxCoordsEdit:
-    GuiControlGet, maxCEdit,, MaxCoordsEdit
-        maxCoords := maxCEdit
-        IniWrite, %maxCEdit%, %iniFile%, Settings, maxCoords
+    GuiControlGet, valueMaxCoordsEdit,, MaxCoordsEdit
+        maxCoords := valueMaxCoordsEdit
+        IniWrite, %valueMaxCoordsEdit%, %iniFile%, Settings, maxCoords
 return
 
 MinCoordsEdit:
-    GuiControlGet, minCEdit,, MinCoordsEdit
-        minCoords := minCEdit
-        IniWrite, %minCEdit%, %iniFile%, Settings, minCoords
+    GuiControlGet, valueMinCoordsEdit,, MinCoordsEdit
+        minCoords := valueMinCoordsEdit
+        IniWrite, %valueMinCoordsEdit%, %iniFile%, Settings, minCoords
 return
 
+
 SeedChange:
-    GuiControlGet, sSeed,, SeedList
-        IniWrite, %sSeed%, %iniFile%, Settings, selectedSeed
+    GuiControlGet, selectedSeed,, SeedDropDownList
+        IniWrite, %selectedSeed%, %iniFile%, Settings, selectedSeed
 return
 
 
@@ -179,7 +184,7 @@ SeedCheck:
         {
             setSeed := true
             GuiControl, Enable, SeedEdit
-            GuiControl, Enable, SeedList
+            GuiControl, Enable, SeedDropDownList
             GuiControl, Enable, AddSeedButton
             GuiControl,, AutoCheck, 0
             Gosub AutoCheck
@@ -189,7 +194,7 @@ SeedCheck:
         {
             setSeed := false
             GuiControl, Disable, SeedEdit
-            GuiControl, Disable, SeedList
+            GuiControl, Disable, SeedDropDownList
             GuiControl, Disable, AddSeedButton
             IniWrite, false, %iniFile%, Settings, setSeed
         }
