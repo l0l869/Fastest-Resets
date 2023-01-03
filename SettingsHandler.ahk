@@ -2,12 +2,12 @@
 SetTitleMatchMode, 3
 SendMode, Input
 
-global iniFile := A_ScriptDir . "\configs\Configs.ini"
+global iniFile := A_ScriptDir . "\configs\configs.ini"
 EnvGet, A_LocalAppData, LocalAppData
 global mcDir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 
 loadConfigs(){
-    FileRead, seedList, configs\Seeds.txt
+    FileRead, seedList, configs\seeds.txt
     IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
     seedList := StrReplace(seedList, selectedSeed, "") ; remove selected seed from dropdown list
         GuiControl,, SeedDropDownList, %seedList%|%selectedSeed%||

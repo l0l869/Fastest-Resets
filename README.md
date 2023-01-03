@@ -9,7 +9,7 @@ A Macro for MCBE Speedrunning that makes reseting easier and faster
 
 1. Download the latest release, either the .exe version (if you dont have AHK V1 installed but I suggest you get AHK) or the regular .ahk version
 
-2. Unzip and run "1.16.1 Macro(.exe/.ahk)"
+2. Unzip and run "Fastest-Resets(.exe/.ahk)"
 
 3. Install the resource pack to assist the macro
 
