@@ -1,6 +1,5 @@
 ﻿#Include ClassMem.ahk
 
-SetTitleMatchMode, 3
 global Minecraft
 global DynPtrBaseAddr := 0
 global xCoord := 0

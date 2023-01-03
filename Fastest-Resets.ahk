@@ -1,10 +1,13 @@
-﻿SetWorkingDir %A_ScriptDir%
-#SingleInstance, Force
+﻿#SingleInstance, Force
+#NoTrayIcon
+SetBatchLines -1
+SetWorkingDir %A_ScriptDir%
 #Include SettingsHandler.ahk
 
 Global AddSeedButton, SeedEdit, SeedDropDownList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetThresholdEdit, AutoRestartCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
 Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords, autoRestart, resetThreshold
 
+Menu Tray, Icon, %A_ScriptDir%\assets\_Icon.ico
 Gui, MainWin:Default
 Gui, -MaximizeBox
 Gui, Show, w420 h200, Fastest Resets
@@ -13,31 +16,31 @@ Gui, Font, s8, Arial
 
 Gui, add, Hotkey, x10 y20 vResetHotkey +Disabled
 Gui, add, Hotkey, x10 y60 vRestartMCHotkey +Disabled
-Gui, add, Text, x10 y5, Reset Key
-Gui, add, Text, x10 y45, Restart MC Key
+Gui, add, Text  , x10 y5, Reset Key
+Gui, add, Text  , x10 y45, Restart MC Key
 Gui, add, Button, x10 y90 w120 h20 gEditHotkeys, Edit Hotkeys
 
-Gui, add, Button, x145 y10 w120 h20 gAddSeed vAddSeedButton, Add Seed
-Gui, add, Edit, x145 y35 vSeedEdit +Number -Multi
+Gui, add, Button      , x145 y10 w120 h20 gAddSeed vAddSeedButton, Add Seed
+Gui, add, Edit        , x145 y35 vSeedEdit +Number -Multi
 Gui, add, DropdownList, x145 y65 vSeedDropDownList gSeedChange
-Gui, add, Checkbox, x145 y95 vSeedCheck gSeedCheck, Set Seed
+Gui, add, Checkbox    , x145 y95 vSeedCheck gSeedCheck, Set Seed
 
-Gui, add, Edit, x320 y10 w90 vMaxCoordsEdit gMaxCoordsEdit +Number -Multi
-Gui, add, Edit, x320 y35 w90 vMinCoordsEdit gMinCoordsEdit +Number -Multi
-Gui, add, Text, x290 y15, xMax
-Gui, add, Text, x290 y40, xMin
+Gui, add, Edit    , x320 y10 w90 vMaxCoordsEdit gMaxCoordsEdit +Number -Multi
+Gui, add, Edit    , x320 y35 w90 vMinCoordsEdit gMinCoordsEdit +Number -Multi
+Gui, add, Text    , x290 y15, xMax
+Gui, add, Text    , x290 y40, xMin
 Gui, add, Checkbox, vAutoCheck gAutoCheck, Auto Reset
 
-Gui, add, Edit, x210 y145 w25 gResetThresholdEdit vResetThresholdEdit +Number -Multi
+Gui, add, Edit    , x210 y145 w25 gResetThresholdEdit vResetThresholdEdit +Number -Multi
 Gui, add, Checkbox, x185 y170 vAutoRestartCheck gAutoRestartCheck, Auto Restart
 
-Gui, add, Text, x145 y150, Delay
-Gui, add, Edit, x145 y166 w30 Center vDelayEdit gDelayEdit +Number -Multi
+Gui, add, Text    , x145 y150, Delay
+Gui, add, Edit    , x145 y166 w30 Center vDelayEdit gDelayEdit +Number -Multi
 
-Gui, add, Button, x10 y125 w120 h20 gInstallResetPack, Install Resource Pack 
-Gui, add, Button, x10 y150 w120 h40 vSetupButton gSetup, Set-up
+Gui, add, Button  , x10 y125 w120 h20 gInstallResetPack, Install Resource Pack 
+Gui, add, Button  , x10 y150 w120 h40 vSetupButton gSetup, Set-up
 
-Gui, add, Button, x300 y165 h20 gOpenMCDir, MC Directory
+Gui, add, Button  , x300 y165 h20 gOpenMCDir, MC Directory
 
 Gui, Font, s10, Arial
 Gui, add, Text, vworldsText w100 x300 y125, #Worlds: -
