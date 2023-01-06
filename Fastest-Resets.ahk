@@ -2,7 +2,7 @@
 #NoTrayIcon
 SetBatchLines -1
 SetWorkingDir %A_ScriptDir%
-#Include SettingsHandler.ahk
+#Include functions/SettingsHandler.ahk
 
 Global AddSeedButton, SeedEdit, SeedDropDownList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetThresholdEdit, AutoRestartCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
 Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords, autoRestart, resetThreshold
@@ -48,7 +48,7 @@ Gui, add, Text, vattemptsText w100 x300 y145, #Attempts: -
 
 loadConfigs()
 
-#Include Resetter.ahk
+#Include functions/Resetter.ahk
 
 ; buttons
 

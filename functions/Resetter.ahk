@@ -1,4 +1,4 @@
-﻿#Include ClassMem.ahk
+﻿#Include functions/ClassMem.ahk
 
 global Minecraft
 global DynPtrBaseAddr := 0
