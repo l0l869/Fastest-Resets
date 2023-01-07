@@ -1,9 +1,4 @@
 ﻿#Include functions/ClassMem.ahk
-
-global Minecraft
-global DynPtrBaseAddr := 0
-global xCoord := 0
-global lastRestart
 Exit
 
 resetInGame:
@@ -32,9 +27,9 @@ Return
 
 inGameReset()
 {
-    attemptsCount := updateAttempts()
+    runAttempts := updateAttempts()
     if autoRestart
-        shouldRestart(attemptsCount)
+        shouldRestart(runAttempts)
 
     MouseGetPos, prevX, prevY
     Send, {Esc}
@@ -127,7 +122,7 @@ updateAttempts(amount := 1)
     }
     txt.Close()
     
-    GuiControl,, attemptsText, #Attempts: %attempts% ; doesnt update if win isnt active
+    GuiControl,, textAttempts, #Attempts: %attempts% ; doesnt update if win isnt active
     return attempts
 }
 

@@ -1,58 +1,65 @@
 ﻿#SingleInstance, Force
 #NoTrayIcon
+#WinActivateForce
 SetBatchLines -1
 SetWorkingDir %A_ScriptDir%
-#Include functions/SettingsHandler.ahk
+SetTitleMatchMode, 3
+SendMode, Input
 
-Global AddSeedButton, SeedEdit, SeedDropDownList, SeedCheck, SetupButton, MaxCoordsEdit, MinCoordsEdit, AutoCheck, ResetThresholdEdit, AutoRestartCheck, ResetHotkey, RestartMCHotkey, DelayEdit, worldsText, attemptsText
-Global keyDelay, setSeed, selectedSeed, autoReset, maxCoords, minCoords, autoRestart, resetThreshold
+#Include functions/Globals.ahk
+#Include functions/SettingsHandler.ahk
 
 Menu Tray, Icon, %A_ScriptDir%\assets\_Icon.ico
 Gui, MainWin:Default
 Gui, -MaximizeBox
-Gui, Show, w420 h200, Fastest Resets
+Gui, Show, w325 h385, Fastest Resets
 Gui, Color, EEEEEE
-Gui, Font, s8, Arial
-
-Gui, add, Hotkey, x10 y20 vResetHotkey +Disabled
-Gui, add, Hotkey, x10 y60 vRestartMCHotkey +Disabled
-Gui, add, Text  , x10 y5, Reset Key
-Gui, add, Text  , x10 y45, Restart MC Key
-Gui, add, Button, x10 y90 w120 h20 gEditHotkeys, Edit Hotkeys
-
-Gui, add, Button      , x145 y10 w120 h20 gAddSeed vAddSeedButton, Add Seed
-Gui, add, Edit        , x145 y35 vSeedEdit +Number -Multi
-Gui, add, DropdownList, x145 y65 vSeedDropDownList gSeedChange
-Gui, add, Checkbox    , x145 y95 vSeedCheck gSeedCheck, Set Seed
-
-Gui, add, Edit    , x320 y10 w90 vMaxCoordsEdit gMaxCoordsEdit +Number -Multi
-Gui, add, Edit    , x320 y35 w90 vMinCoordsEdit gMinCoordsEdit +Number -Multi
-Gui, add, Text    , x290 y15, xMax
-Gui, add, Text    , x290 y40, xMin
-Gui, add, Checkbox, vAutoCheck gAutoCheck, Auto Reset
-
-Gui, add, Edit    , x210 y145 w25 gResetThresholdEdit vResetThresholdEdit +Number -Multi
-Gui, add, Checkbox, x185 y170 vAutoRestartCheck gAutoRestartCheck, Auto Restart
-
-Gui, add, Text    , x145 y150, Delay
-Gui, add, Edit    , x145 y166 w30 Center vDelayEdit gDelayEdit +Number -Multi
-
-Gui, add, Button  , x10 y125 w120 h20 gInstallResetPack, Install Resource Pack 
-Gui, add, Button  , x10 y150 w120 h40 vSetupButton gSetup, Set-up
-
-Gui, add, Button  , x300 y165 h20 gOpenMCDir, MC Directory
-
 Gui, Font, s10, Arial
-Gui, add, Text, vworldsText w100 x300 y125, #Worlds: -
-Gui, add, Text, vattemptsText w100 x300 y145, #Attempts: -
+
+Gui, add, GroupBox, y5 w150 h150, Hotkeys
+Gui, add, Text    , y25 x25, Reset Key
+Gui, add, Text    , y70 x25, Restart MC Key
+Gui, add, Hotkey  , y40 x25 w120 vhotkeyboxResetKey +Disabled
+Gui, add, Hotkey  , y85 x25 w120 vhotkeyboxRestartMc +Disabled
+Gui, add, Button  , w120 h20 gEditHotkeys, Edit Hotkeys
+
+Gui, add, GroupBox, y160 x10 w150 h120, Set Seed
+Gui, add, Edit    , y180 x25 w120 veditboxSeed gAddSeed +Number -Multi
+Gui, add, Button  , y205 x25 w120 h20 vbuttonAddSeed, Add Seed
+Gui, add, DDL     , y230 x25 w120 vdropdownlistSeed gdropdownlistSeed
+Gui, add, Checkbox, y260 x25 vcheckboxSetSeed gcheckboxSetSeed, Set Seed
+
+Gui, add, GroupBox, x10 w150 h90, Auto Reset
+Gui, add, Text    , y310 x35, xMax
+Gui, add, Text    , y335 x35, xMin
+Gui, add, Edit    , y305 x80 w45 veditboxMaxCoords geditboxMaxCoords +Number -Multi Center
+Gui, add, Edit    , y330 x80 w45 veditboxMinCoords geditboxMinCoords +Number -Multi Center
+Gui, add, Checkbox, y355 x40 vcheckboxAutoReset gcheckboxAutoReset, Auto Reset
+
+Gui, add, GroupBox, y5 x165 w150 h75, Extra
+Gui, add, Edit    , y25 x175 w25 veditboxResetThreshold geditboxResetThreshold +Number -Multi Center
+Gui, add, Checkbox, y30 x205 vcheckboxAutoRestart gcheckboxAutoRestart, Auto Restart
+
+Gui, add, Text    , y55 x210, Key Delay
+Gui, add, Edit    , y50 x175 w25 veditboxKeyDelay geditboxKeyDelay +Number -Multi Center
+
+Gui, add, Button  , y85 x165 w150 h20 gInstallPack, Install Resource Pack 
+Gui, add, Button  , y110 x165 w150 h40 vbuttonSetUp gSetup, Set-up
+
+Gui, add, Button  , y160 x225 h25 gOpenMCDir, MC Directory
+
+Gui, Font, s13
+Gui, add, Text, y190 x165 w150 vtextWorlds, #Worlds: -
+Gui, add, Text, y215 x165 w150 vtextAttempts, #Attempts: -
 
 loadConfigs()
 
+#Include functions/Setup.ahk
 #Include functions/Resetter.ahk
 
 ; buttons
 
-InstallResetPack:
+InstallPack:
     if FileExist(mcDir . "\resource_packs\FastestRes")  ; automatic update pack soon
     {
         MsgBox, Fastest Resets Pack already imported.
@@ -69,25 +76,25 @@ return
 
 EditHotkeys:
     Gui, hotkeysWin:Show, w150 h145, Edit Hotkeys
-    Gui, hotkeysWin:add, Hotkey, x10 y20 w130 vrKey
-    Gui, hotkeysWin:add, Hotkey, x10 y65 w130 vrmcKey
+    Gui, hotkeysWin:add, Hotkey, x10 y20 w130 vhotkeyboxNewResetKey
+    Gui, hotkeysWin:add, Hotkey, x10 y65 w130 vhotkeyboxNewRestartMc
     Gui, hotkeysWin:add, Text, x10 y5,Reset Key
     Gui, hotkeysWin:add, Text, x10 y50,Restart MC Key
     Gui, hotkeysWin:add, Button, x10 y100 w130 h30 gSaveHotkeys,Save
 
     IniRead, iniKey, %iniFile%, Hotkeys, Reset
-        GuiControl,hotkeysWin:, rKey, %iniKey%
+        GuiControl,hotkeysWin:, hotkeyboxNewResetKey, %iniKey%
 
     IniRead, iniKey, %iniFile%, Hotkeys, RestartMinecraft
-        GuiControl,hotkeysWin:, rmcKey, %iniKey%
+        GuiControl,hotkeysWin:, hotkeyboxNewRestartMc, %iniKey%
 return
 
 SaveHotkeys:
     Gui, hotkeysWin:Submit
     Gui, hotkeysWin:Destroy
 
-    IniWrite, %rKey%, %iniFile%, Hotkeys, Reset
-    IniWrite, %rmcKey%, %iniFile%, Hotkeys, RestartMinecraft
+    IniWrite, %hotkeyboxNewResetKey%, %iniFile%, Hotkeys, Reset
+    IniWrite, %hotkeyboxNewRestartMc%, %iniFile%, Hotkeys, RestartMinecraft
 
     if A_IsCompiled
         Run, Fastest-Resets.exe
@@ -101,9 +108,9 @@ Setup:
     {
         MsgBox, 1,, Be ready on the screen that has the "Create New" button. Once hit OK dont interfere process. Note: The way Minecraft is displayed now is the way you'll play.
         IfMsgBox OK
-            {
-                setUp()
-            }
+        {
+            setUp()
+        }
     }
     IfMsgBox No 
     {
@@ -114,7 +121,7 @@ Setup:
 return
 
 AddSeed:
-    GuiControlGet inputtedSeed,, SeedEdit
+    GuiControlGet inputtedSeed,, editboxSeed
     FileRead, seedList, configs\seeds.txt
 
     if !inputtedSeed
@@ -127,98 +134,98 @@ AddSeed:
     Else
     {
         FileAppend, |%inputtedSeed%, configs\seeds.txt
-        GuiControl,, SeedDropDownList, %inputtedSeed% ; weird
-        GuiControl,, SeedEdit
+        GuiControl,, dropdownlistSeed, %inputtedSeed% ; weird
+        GuiControl,, editboxSeed
     }
 return
 
 ; edits, checkboxes
 
-DelayEdit:
-    GuiControlGet, valueDelayEdit,, DelayEdit
-        IniWrite, %valueDelayEdit%, %iniFile%, Settings, keyDelay
-        keyDelay := valueDelayEdit
+editboxKeyDelay:
+    GuiControlGet, valueKeyDelay,, editboxKeyDelay
+        IniWrite, %valueKeyDelay%, %iniFile%, Settings, keyDelay
+        keyDelay := valueKeyDelay
 return
 
-ResetThresholdEdit:
-    GuiControlGet, iniResetThreshold,, ResetThresholdEdit
+editboxResetThreshold:
+    GuiControlGet, iniResetThreshold,, editboxResetThreshold
         IniWrite, %iniResetThreshold%, %iniFile%, Settings, resetThreshold
         resetThreshold := iniResetThreshold
 return
 
-AutoRestartCheck:
-    GuiControlGet, state,, AutoRestartCheck
-    if state = 1
+checkboxAutoRestart:
+    GuiControlGet, autoRestart,, checkboxAutoRestart
+    if autoRestart
     {
         IniWrite, true, %iniFile%, Settings, autoRestart
         autoRestart := true
-        GuiControl, Enable, ResetThresholdEdit
+        GuiControl, Enable, editboxResetThreshold
     }
     Else
     {
         IniWrite, false, %iniFile%, Settings, autoRestart
         autoRestart := false
-        GuiControl, Disable, ResetThresholdEdit
+        GuiControl, Disable, editboxResetThreshold
     }   
 return
 
-MaxCoordsEdit:
-    GuiControlGet, valueMaxCoordsEdit,, MaxCoordsEdit
+editboxMaxCoords:
+    GuiControlGet, valueMaxCoordsEdit,, editboxMaxCoords
         maxCoords := valueMaxCoordsEdit
         IniWrite, %valueMaxCoordsEdit%, %iniFile%, Settings, maxCoords
 return
 
-MinCoordsEdit:
-    GuiControlGet, valueMinCoordsEdit,, MinCoordsEdit
+editboxMinCoords:
+    GuiControlGet, valueMinCoordsEdit,, editboxMinCoords
         minCoords := valueMinCoordsEdit
         IniWrite, %valueMinCoordsEdit%, %iniFile%, Settings, minCoords
 return
 
 
-SeedChange:
-    GuiControlGet, selectedSeed,, SeedDropDownList
+dropdownlistSeed:
+    GuiControlGet, selectedSeed,, dropdownlistSeed
         IniWrite, %selectedSeed%, %iniFile%, Settings, selectedSeed
 return
 
 
-SeedCheck:
-    GuiControlGet, state,, SeedCheck
-        if state = 1
+checkboxSetSeed:
+    GuiControlGet, setSeed,, checkboxSetSeed
+        if setSeed
         {
             setSeed := true
-            GuiControl, Enable, SeedEdit
-            GuiControl, Enable, SeedDropDownList
-            GuiControl, Enable, AddSeedButton
-            GuiControl,, AutoCheck, 0
-            Gosub AutoCheck
+            GuiControl, Enable, editboxSeed
+            GuiControl, Enable, dropdownlistSeed
+            GuiControl, Enable, buttonAddSeed
+            GuiControl,, checkboxAutoReset, 0
+            Gosub checkboxAutoReset
             IniWrite, true, %iniFile%, Settings, setSeed
         }
         Else
         {
             setSeed := false
-            GuiControl, Disable, SeedEdit
-            GuiControl, Disable, SeedDropDownList
-            GuiControl, Disable, AddSeedButton
+            GuiControl, Disable, editboxSeed
+            GuiControl, Disable, dropdownlistSeed
+            GuiControl, Disable, buttonAddSeed
             IniWrite, false, %iniFile%, Settings, setSeed
         }
 return
 
-AutoCheck:
-    GuiControlGet, state,, AutoCheck
-        if state = 1
+checkboxAutoReset:
+    GuiControlGet, autoReset,, checkboxAutoReset
+        if autoReset
         {
             autoReset := true
-            GuiControl, Enable, maxCoordsEdit
-            GuiControl, Enable, minCoordsEdit
-            GuiControl,, SeedCheck, 0
-            Gosub SeedCheck
+            GuiControl, Enable, editboxMaxCoords
+            GuiControl, Enable, editboxMinCoords
+            GuiControl,, checkboxSetSeed, 0
+            Gosub checkboxSetSeed
             IniWrite, true, %iniFile%, Settings, autoReset
         }
         Else
         {
             autoReset := false
-            GuiControl, Disable, maxCoordsEdit
-            GuiControl, Disable, minCoordsEdit
+            GuiControl, Disable, editboxMaxCoords
+            GuiControl, Disable, editboxMinCoords
             IniWrite, false, %iniFile%, Settings, autoReset
         }
 return
