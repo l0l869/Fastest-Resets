@@ -1,5 +1,5 @@
 ;===Process===
-global MinecraftProc
+global mcProc
 global DynPtrBaseAddr
 global xCoord
 global lastRestart
@@ -7,6 +7,7 @@ global lastRestart
 
 ;===Script===
 global SCRIPT_VERSION := 20230107
+global PACK_VERSION := 1.1
 global iniFile := A_ScriptDir . "\configs\configs.ini"
 global mcDir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 

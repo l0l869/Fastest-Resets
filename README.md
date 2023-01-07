@@ -20,7 +20,7 @@ A Macro for MCBE Speedrunning that makes reseting easier and faster
 6. A Pop-up saying "Success" would appear to indicate you're ready for resetting, otherwise it would abort if failed
 
 
-## Aditional Info
+## Additional Info
 * Keep the delay at a minimum of 35ms for verification purposes
 
 * Make sure when taking screenshots the buttons aren't highlighed green

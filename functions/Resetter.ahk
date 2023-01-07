@@ -11,9 +11,9 @@ resetInGame:
     }
     IfWinActive, Minecraft
     {
-        Minecraft := "" ; close handle of old mc
-        Minecraft := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-        DynPtrBaseAddr := Minecraft.baseAddress + 0x0369D0A8 ;ptr to player's x coords
+        mcProc := "" ; close handle of old mc
+        mcProc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+        DynPtrBaseAddr := mcProc.baseAddress + 0x0369D0A8 ;ptr to player's x coords
 
         inGameReset()
     }
@@ -83,7 +83,7 @@ inGameReset()
         
         findButton("Heart", boundsBtn[1], boundsBtn[2], 2, 2, 1000, -1, false)
 
-        xCoord := Minecraft.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
+        xCoord := mcProc.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
             else
