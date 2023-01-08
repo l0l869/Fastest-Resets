@@ -39,18 +39,17 @@ Gui, add, Checkbox, y355 x40 vcheckboxAutoReset gcheckboxAutoReset, Auto Reset
 Gui, add, GroupBox, y5 x165 w150 h75, Extra
 Gui, add, Edit    , y25 x175 w25 veditboxResetThreshold geditboxResetThreshold +Number -Multi Center
 Gui, add, Checkbox, y30 x205 vcheckboxAutoRestart gcheckboxAutoRestart, Auto Restart
-
 Gui, add, Text    , y55 x210, Key Delay
 Gui, add, Edit    , y50 x175 w25 veditboxKeyDelay geditboxKeyDelay +Number -Multi Center
 
-Gui, add, Button  , y85 x165 w150 h20 gInstallPack, Install Resource Pack 
-Gui, add, Button  , y110 x165 w150 h40 vbuttonSetUp gSetup, Set-up
+Gui, add, Button  , y306 x165 w150 h25 gInstallPack, Install Resource Pack 
+Gui, add, Button  , y336 x165 w150 h40 vbuttonSetUp gSetup, Set-up
 
-Gui, add, Button  , y160 x225 h25 gOpenMCDir, MC Directory
+Gui, add, Button  , y85 x165 w150 h25 gOpenMCDir, MC Directory
 
 Gui, Font, s13
-Gui, add, Text, y190 x165 w150 vtextWorlds, #Worlds: -
-Gui, add, Text, y215 x165 w150 vtextAttempts, #Attempts: -
+Gui, add, Text    , y115 x165 w150 vtextWorlds, #Worlds: -
+Gui, add, Text    , y140 x165 w150 vtextAttempts, #Attempts: -
 
 loadConfigs()
 
