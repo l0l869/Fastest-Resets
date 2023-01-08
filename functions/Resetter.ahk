@@ -33,22 +33,16 @@ inGameReset()
 
     MouseGetPos, prevX, prevY
     Send, {Esc}
-    findButton("Quit")
+    findButton("Quit", 400, 400)
     Sleep, 1500
 
-    IniRead, iniBtn, %iniFile%, Macro, CreateNew
-    boundsBtn := StrSplit(iniBtn, A_Space)
-    findButton("CreateNew", boundsBtn[1], boundsBtn[2], 500, 500)
+    findButton("CreateNew", 500, 500)
     Sleep, %keyDelay%
 
-    IniRead, iniBtn, %iniFile%, Macro, CreateNewWorld
-    boundsBtn := StrSplit(iniBtn, A_Space)
-    findButton("CreateNewWorld", boundsBtn[1], boundsBtn[2], 750, 500)
+    findButton("CreateNewWorld", 750, 500)
     Sleep, %keyDelay%
 
-    IniRead, iniBtn, %iniFile%, Macro, Easy
-    boundsBtn := StrSplit(iniBtn, A_Space)
-    findButton("Easy", boundsBtn[1], boundsBtn[2], 400, 400)
+    findButton("Easy", 400, 400)
     Sleep, %keyDelay%
 
     IniRead, iniBtn, %iniFile%, Macro, Coords
@@ -75,13 +69,10 @@ inGameReset()
 
     if autoReset
     {
-        IniRead, iniBtn, %iniFile%, Macro, Heart
-        boundsBtn := StrSplit(iniBtn, A_Space)
-
         IniRead, worldGenTimeSleep, %iniFile%, Macro, WorldGenTime
         Sleep, worldGenTimeSleep - 1000 ; -1000: incase world loads faster than expected
         
-        findButton("Heart", boundsBtn[1], boundsBtn[2], 2, 2, 1000, -1, false)
+        findButton("Heart", 2, 2, 1000, -1, false)
 
         xCoord := mcProc.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
@@ -91,16 +82,19 @@ inGameReset()
     }
 }
 
-findButton(btn, bx := 0, by := 0, dx := 1920, dy := 1080, attempts := 200, findDelay := 1, doClick := true)
+findButton(btn, dx := 1920, dy := 1080, attempts := 200, findDelay := 1, doClick := true)
 {
+    IniRead, iniBtn, %iniFile%, Macro, %btn%
+    boundsBtn := StrSplit(iniBtn, A_Space)
+
     Loop, {
         if A_Index > %attempts%
         {
             MsgBox, Couldn't find %btn%, try doing setup to calibrate
-            updateAttempts(-1)
+            runAttempts := updateAttempts(-1)
             Exit
         }
-        ImageSearch, X, Y, bx, by, bx+dx, by+dy, assets/%btn%.png
+        ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+dx, boundsBtn[2]+dy, assets/%btn%.png
         if ErrorLevel = 0
         {
             if doClick
