@@ -5,6 +5,7 @@ SetBatchLines -1
 SetWorkingDir %A_ScriptDir%
 SetTitleMatchMode, 3
 SendMode, Input
+CoordMode, Mouse, Screen
 
 #Include functions/Globals.ahk
 #Include functions/SettingsHandler.ahk
@@ -42,18 +43,16 @@ Gui, add, Checkbox, y30 x205 vcheckboxAutoRestart gcheckboxAutoRestart, Auto Res
 Gui, add, Text    , y55 x210, Key Delay
 Gui, add, Edit    , y50 x175 w25 veditboxKeyDelay geditboxKeyDelay +Number -Multi Center
 
-Gui, add, Button  , y306 x165 w150 h25 gInstallPack, Install Resource Pack 
-Gui, add, Button  , y336 x165 w150 h40 vbuttonSetUp gSetup, Set-up
+Gui, add, Button  , y85 x165 w150 h25 gInstallPack, Install Resource Pack 
 
-Gui, add, Button  , y85 x165 w150 h25 gOpenMCDir, MC Directory
+Gui, add, Button  , y115 x165 w150 h25 gOpenMCDir, MC Directory
 
 Gui, Font, s13
-Gui, add, Text    , y115 x165 w150 vtextWorlds, #Worlds: -
-Gui, add, Text    , y140 x165 w150 vtextAttempts, #Attempts: -
+Gui, add, Text    , y145 x165 w150 vtextWorlds, #Worlds: -
+Gui, add, Text    , y170 x165 w150 vtextAttempts, #Attempts: -
 
 loadConfigs()
 
-#Include functions/Setup.ahk
 #Include functions/Resetter.ahk
 
 ; buttons
@@ -99,24 +98,6 @@ SaveHotkeys:
         Run, Fastest-Resets.exe
     Else
         Run, Fastest-Resets.ahk
-return
-
-Setup:
-    MsgBox, 4,, Have you taken screenshots?
-    IfMsgBox Yes
-    {
-        MsgBox, 1,, Be ready on the screen that has the "Create New" button. Once hit OK dont interfere process. Note: The way Minecraft is displayed now is the way you'll play.
-        IfMsgBox OK
-        {
-            setUp()
-        }
-    }
-    IfMsgBox No 
-    {
-        Run, %A_ScriptDir%\assets
-        Sleep, 1000
-        MsgBox, Windows Key + Shift + S, to screenshot buttons with their corresponding file name like the examples provided.
-    }
 return
 
 AddSeed:

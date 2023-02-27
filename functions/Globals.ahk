@@ -38,7 +38,6 @@ global dropdownlistSeed
 global checkboxSetSeed
 
         ;Setup
-;global buttonSetUp
 ;global buttonInstallPack
 ;global buttonOpenMcDir
 

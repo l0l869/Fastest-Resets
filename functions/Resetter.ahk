@@ -13,7 +13,6 @@ resetInGame:
     {
         mcProc := "" ; close handle of old mc
         mcProc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-        DynPtrBaseAddr := mcProc.baseAddress + 0x0369D0A8 ;ptr to player's x coords
 
         inGameReset()
     }
@@ -27,54 +26,51 @@ Return
 
 inGameReset()
 {
+    WinGetPos, X, Y, Width, Height, Minecraft
     runAttempts := updateAttempts()
     if autoRestart
         shouldRestart(runAttempts)
 
-    MouseGetPos, prevX, prevY
     Send, {Esc}
-    findButton("Quit", 400, 400)
+    waitImage("") ; Quit
+    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
     Sleep, 1500
 
-    findButton("CreateNew", 500, 500)
+    waitImage("") ; CreateNew
+    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
     Sleep, %keyDelay%
 
-    findButton("CreateNewWorld", 750, 500)
+    waitImage("") ; CreateNewWorld
+    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
     Sleep, %keyDelay%
 
-    findButton("Easy", 400, 400)
+    waitImage("") ; Easy
+    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
     Sleep, %keyDelay%
 
-    IniRead, iniBtn, %iniFile%, Macro, Coords
-    Click, %iniBtn%                     ;Coords
+    MouseClick,, X+10, Y+30+(Height-30)*.1,,0                     ;Coords
     Sleep, %keyDelay%
 
-    IniRead, iniBtn, %iniFile%, Macro, SimDis
-    Click, %iniBtn%                     ;SimDis
+    MouseClick,, X+10, Y+30+(Height-30)*15,,0                     ;SimDis
     Sleep, %keyDelay%
 
     if setSeed
     {
-        IniRead, iniBtn, %iniFile%, Macro, Seed
-        Click, %iniBtn%                 ;Seed
+        MouseClick,, X+10, Y+30+(Height-30)*.2,,0                 ;Seed
         Sleep, 1
         IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Send, %selectedSeed%
         Sleep, %keyDelay%
     }
 
-    IniRead, iniBtn, %iniFile%, Macro, Create
-    Click, %iniBtn%                     ;Create
-    MouseMove, %prevX%, %prevY%
+    MouseClick,, X+10, Y+30+(Height-30)*.25,,0                     ;Create
+    MouseMove, X+Width/2, Y+Height/2
 
     if autoReset
-    {
-        IniRead, worldGenTimeSleep, %iniFile%, Macro, WorldGenTime
-        Sleep, worldGenTimeSleep - 1000 ; -1000: incase world loads faster than expected
-        
-        findButton("Heart", 2, 2, 1000, -1, false)
+    {        
+        waitImage("") ; Heart
 
-        xCoord := mcProc.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
+        xCoord := mcProc.read(mcProc.baseAddress + 0x0369D0A8, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
             else
@@ -82,25 +78,18 @@ inGameReset()
     }
 }
 
-findButton(btn, dx := 1920, dy := 1080, attempts := 200, findDelay := 1, doClick := true)
+waitImage(image, dx := 1920, dy := 1080, attempts := 200, findDelay := 1)
 {
-    IniRead, iniBtn, %iniFile%, Macro, %btn%
-    boundsBtn := StrSplit(iniBtn, A_Space)
-
     Loop, {
         if A_Index > %attempts%
         {
-            MsgBox, Couldn't find %btn%, try doing setup to calibrate
+            MsgBox, Couldn't find %image%
             runAttempts := updateAttempts(-1)
             Exit
         }
-        ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+dx, boundsBtn[2]+dy, assets/%btn%.png
+        ImageSearch, X, Y, 0, 0, dx, dy, assets/%image%.png
         if ErrorLevel = 0
-        {
-            if doClick
-                Click, %X% %Y%
             return 1
-        }
         Sleep, %findDelay%
     }
 }

@@ -45,3 +45,38 @@
 
     updateAttempts(0)
 }
+
+checkFaults()
+{
+    ; Test if minecraft is open
+    if WinExist("Minecraft")
+        WinActivate
+    else 
+    {    
+        MsgBox, Minecraft is not open!
+        Return
+    }
+
+    ; checks if PNGs exists
+    imgFiles := [] ; tbd
+    For i, file in imgFiles
+    {
+        if !FileExist(A_ScriptDir . "\assets\" . file)
+        {
+            MsgBox, Couldn't find file: %file% in assets folder
+            return
+        }
+    }
+    
+    ; button checks
+    ; need to figure this out
+
+    ; exiting world test
+    waitImage("") ; possibly
+
+    Send, {Esc}
+    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
+    Sleep, 50 ; sometimes quit btn doesnt actually activate
+
+    MsgBox, Success!
+}
