@@ -11,8 +11,8 @@ resetInGame:
     }
     IfWinActive, Minecraft
     {
-        mcProc := "" ; close handle of old mc
-        mcProc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+        MCproc := "" ; close handle of old mc
+        MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
 
         inGameReset()
     }
@@ -26,51 +26,52 @@ Return
 
 inGameReset()
 {
-    WinGetPos, X, Y, Width, Height, Minecraft
+    WinGetPos, winX, winY, winWidth, winHeight, Minecraft
+    winX2 := winX+winWidth
+    winY2 := winY+winHeight
     runAttempts := updateAttempts()
     if autoRestart
         shouldRestart(runAttempts)
 
     Send, {Esc}
-    waitImage("") ; Quit
-    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
-    Sleep, 1500
+    waitUntil(Func("findPixel"),,,0xF54242,winX2-20,winY2-20,40,40) ; Quit
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0
 
-    waitImage("") ; CreateNew
-    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
+    waitUntil(Func("findPixel"),,,0xF57B42,winX2-20,winY2-20,40,40) ; CreateNew
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0
     Sleep, %keyDelay%
 
-    waitImage("") ; CreateNewWorld
-    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
+    waitUntil(Func("findPixel"),,,0xF5D742,winX2-20,winY2-20,40,40) ; CreateNewWorld
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0
     Sleep, %keyDelay%
 
-    waitImage("") ; Easy
-    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
+    waitUntil(Func("findPixel"),,,0x4E42F5,winX2-20,winY2-20,40,40)
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0            ; Easy
     Sleep, %keyDelay%
 
-    MouseClick,, X+10, Y+30+(Height-30)*.1,,0                     ;Coords
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.075,,0            ; Coords
     Sleep, %keyDelay%
 
-    MouseClick,, X+10, Y+30+(Height-30)*15,,0                     ;SimDis
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.125,,0            ; SimDis
     Sleep, %keyDelay%
 
     if setSeed
     {
-        MouseClick,, X+10, Y+30+(Height-30)*.2,,0                 ;Seed
+        MouseClick,, winX+10, winY+30+(winHeight-30)*.175,,0        ; Seed
         Sleep, 1
         IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Send, %selectedSeed%
         Sleep, %keyDelay%
     }
 
-    MouseClick,, X+10, Y+30+(Height-30)*.25,,0                     ;Create
-    MouseMove, X+Width/2, Y+Height/2
+    MouseClick,, winX+10, winY+30+(winHeight-30)*.25,,0             ; Create
+    MouseMove, winX+winWidth/2, winY+winHeight/2
 
     if autoReset
     {        
-        waitImage("") ; Heart
+        waitUntil(Func("getValue"),2000,10, "Float", 0x0369D0A8, 0xA8, 0x10, 0x954) ; when in world
 
-        xCoord := mcProc.read(mcProc.baseAddress + 0x0369D0A8, "Float", 0xA8, 0x10, 0x954)
+        xCoord := MCproc.read(MCproc.baseAddress + 0x0369D0A8, "Float", 0xA8, 0x10, 0x954)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
             else
@@ -78,19 +79,36 @@ inGameReset()
     }
 }
 
-waitImage(image, dx := 1920, dy := 1080, attempts := 200, findDelay := 1)
+findImage(image,x,y,dx,dy)
+{
+    ImageSearch, outX, outY, x, y, x+dx, y+dy, assets/%image%.png
+    return !ErrorLevel
+}
+
+findPixel(colour,x,y,dx,dy)
+{
+    PixelSearch, outX, outY, x, y, x+dx, y+dy, colour, 3, RGB Fast
+    return !ErrorLevel
+}
+
+getValue(dataType, baseOffset, offsets*)
+{
+    value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
+    return (value < 100000 && 0 < value)
+}
+
+waitUntil(Function, attempts := 500, checkDelay := 1, Args*)
 {
     Loop, {
         if A_Index > %attempts%
         {
-            MsgBox, Couldn't find %image%
+            MsgBox, Timed Out!
             runAttempts := updateAttempts(-1)
             Exit
         }
-        ImageSearch, X, Y, 0, 0, dx, dy, assets/%image%.png
-        if ErrorLevel = 0
+        if %Function%(Args*)
             return 1
-        Sleep, %findDelay%
+        Sleep, %checkDelay%
     }
 }
 
@@ -105,7 +123,8 @@ updateAttempts(amount := 1)
     }
     txt.Close()
     
-    GuiControl,, textAttempts, #Attempts: %attempts% ; doesnt update if win isnt active
+    Gui, MainWin:Default ; to be able to update text
+    GuiControl,, textAttempts, #Attempts: %attempts% 
     return attempts
 }
 

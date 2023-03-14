@@ -40,8 +40,14 @@
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
         keyDelay := iniKeyDelay
 
-    worldCount := ComObjCreate("Shell.Application").NameSpace(mcDir . "\minecraftWorlds").Items.Count
+    worldCount := ComObjCreate("Shell.Application").NameSpace(MCdir . "\minecraftWorlds").Items.Count
         GuiControl,, textWorlds, #Worlds: %worldCount%
+
+    if WinExist("Minecraft"){
+        MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+        FileGetVersion, MCversion, % MCproc.GetModuleFileNameEx()
+            GuiControl,, textMCVersion, MCVersion: %MCversion%
+    }
 
     updateAttempts(0)
 }
@@ -56,27 +62,8 @@ checkFaults()
         MsgBox, Minecraft is not open!
         Return
     }
-
-    ; checks if PNGs exists
-    imgFiles := [] ; tbd
-    For i, file in imgFiles
-    {
-        if !FileExist(A_ScriptDir . "\assets\" . file)
-        {
-            MsgBox, Couldn't find file: %file% in assets folder
-            return
-        }
-    }
     
     ; button checks
-    ; need to figure this out
-
-    ; exiting world test
-    waitImage("") ; possibly
-
-    Send, {Esc}
-    MouseClick,, X+10, Y+30+(Height-30)*.05,,0
-    Sleep, 50 ; sometimes quit btn doesnt actually activate
-
-    MsgBox, Success!
+    
+    ;other stuff like pack version, compatibility warnings, pack detection, update checks
 }

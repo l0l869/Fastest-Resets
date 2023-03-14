@@ -1,15 +1,15 @@
 ;===Process===
-global mcProc
-global DynPtrBaseAddr
+global MCproc
+global MCversion
 global xCoord
 global lastRestart
 
 
 ;===Script===
-global SCRIPT_VERSION := 20230108
+global SCRIPT_VERSION := 20230314
 global PACK_VERSION := 1.1
 global iniFile := A_ScriptDir . "\configs\configs.ini"
-global mcDir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
+global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 
 
 ;===Config===
@@ -70,6 +70,7 @@ global editboxKeyDelay
         ;Stats
 global textWorlds
 global textAttempts
+global textMCVersion
 
 
 ;===Env===

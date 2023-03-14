@@ -6,6 +6,7 @@ SetWorkingDir %A_ScriptDir%
 SetTitleMatchMode, 3
 SendMode, Input
 CoordMode, Mouse, Screen
+CoordMode, Pixel, Screen
 
 #Include functions/Globals.ahk
 #Include functions/SettingsHandler.ahk
@@ -13,9 +14,9 @@ CoordMode, Mouse, Screen
 Menu Tray, Icon, %A_ScriptDir%\assets\_Icon.ico
 Gui, MainWin:Default
 Gui, -MaximizeBox
-Gui, Show, w325 h385, Fastest Resets
+Gui, Show , w325 h385, Fastest Resets
 Gui, Color, EEEEEE
-Gui, Font, s10, Arial
+Gui, Font , s10, Arial
 
 Gui, add, GroupBox, y5 w150 h150, Hotkeys
 Gui, add, Text    , y25 x25, Reset Key
@@ -50,6 +51,7 @@ Gui, add, Button  , y115 x165 w150 h25 gOpenMCDir, MC Directory
 Gui, Font, s13
 Gui, add, Text    , y145 x165 w150 vtextWorlds, #Worlds: -
 Gui, add, Text    , y170 x165 w150 vtextAttempts, #Attempts: -
+Gui, add, Text    , y195 x165 w150 vtextMCVersion, MC Version: -
 
 loadConfigs()
 
@@ -58,7 +60,7 @@ loadConfigs()
 ; buttons
 
 InstallPack:
-    if FileExist(mcDir . "\resource_packs\FastestRes")  ; automatic update pack soon
+    if FileExist(MCdir . "\resource_packs\FastestRes")  ; automatic update pack soon
     {
         MsgBox, Fastest Resets Pack already imported.
     }
@@ -69,7 +71,7 @@ InstallPack:
 return
 
 OpenMCDir: 
-    run, %mcDir%
+    run, %MCdir%
 return
 
 EditHotkeys:
