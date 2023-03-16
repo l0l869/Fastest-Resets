@@ -1,0 +1,147 @@
+{
+    "fast_world_options": {
+        "type": "panel",
+        "size": [
+            "100%",
+            "35px"
+        ],
+        "controls": [
+            {
+                "easy_difficulty@settings_common.section_toggle_base": {
+                    "$toggle_name": "#world_difficulty_radio_easy",
+                    "$option_binding_name": "#world_difficulty_radio_easy",
+                    "$unchecked_control": "common_toggles.toggle_unchecked",
+                    "$checked_control": "common_toggles.toggle_unchecked",
+                    "$button_type_panel": "settings_common.toggle_button_control_2",
+                    "$button_label_offset": [0,0],
+                    "visible": "(not (option_dropdown_2.option_label = options.difficulty.easy))",
+                    "size": ["30%",35],
+                    "$button_text": "options.difficulty.easy",
+                    "layer": 3,
+                    "bindings": [
+                        {
+                            "binding_name": "#world_difficulty_radio_easy",
+                            "binding_name_override": "(not #visible)"
+                        }
+                    ]
+                }
+            },
+            {
+                "show_coords@settings_common.section_toggle_base": {
+                    "$toggle_name": "show_coordinates",
+                    "$option_binding_name": "#show_coordinates",
+                    "$unchecked_control": "common_toggles.toggle_unchecked",
+                    "$checked_control": "common_toggles.toggle_unchecked",
+                    "$button_type_panel": "settings_common.toggle_button_control_2",
+                    "$button_label_offset": [0,0],
+                    "size": ["30%",35],
+                    "offset": ["30%",0],
+                    "layer": 3,
+                    "$button_text": "Coords"
+                }
+            },
+            {
+                "sim_distance@settings_common.option_slider": {
+                    "$option_label": "#server_sim_distance_slider_label",
+                    "$slider_name": "server_sim_distance",
+                    "size": ["40%",35],
+                    "anchor_from": "top_left",
+                    "anchor_to": "top_left",
+                    "offset": ["60%",0],
+                    "$slider_value_binding_name": "#server_sim_distance",
+                    "$option_enabled_binding_name": "#server_sim_distance_enabled",
+                    "$slider_tts_text_value": "#server_sim_distance_text_value",
+                    "$slider_steps_binding_name": "#server_sim_distance_steps",
+                    "layer": 3,
+                    "$label_bindings": [
+                        {
+                            "binding_name": "$option_label"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "fast_pregame_resets_panel": {
+        "type": "panel",
+        "size": [
+            "100%",
+            "25px"
+        ],
+        "visible": "$is_pregame",
+        "controls": [
+            {
+                "seed_selector@settings_common.option_text_edit": {
+                    "$tts_section_header": "createWorldScreen.worldPreferences",
+                    "$option_label": "createWorldScreen.levelSeed",
+                    "$option_place_holder_text": "Seed",
+                    "$option_binding_name": "#world_seed",
+                    "$option_enabled_binding_name": "#world_seed_enabled",
+                    "$text_box_name": "world_seed_text_box",
+                    "anchor_from":"top_left",
+                    "anchor_to":"top_left",
+                    "size": ["60%",25]
+                }
+            },
+            {
+                "multiplayer_game_toggle@settings_common.option_toggle": {
+                    "$option_label": "Multiplayer",
+                    "$option_binding_name": "#multiplayer_game",
+                    "$option_enabled_binding_name": "#multiplayer_game_enabled",
+                    "$toggle_name": "multiplayer_game",
+                    "offset": ["60%","25%"]
+                }
+            }
+        ]
+    },
+    "fast_resets_panel": {
+        "type": "stack_panel",
+        "orientation": "vertical",
+        "controls": [
+            {
+                "fast_world_options@fast_world_options": {}
+            },
+            {
+                "fast_pregame_resets_panel@fast_pregame_resets_panel":{}
+            },
+            {
+                "empty_padding": {
+                    "type": "panel",
+                    "size": [0,"10px"]
+                }
+            }
+        ]
+    },
+    "game_section": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "unlock_template_options_panel"
+            },
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "option_info_label"
+            },
+            {
+                "array_name": "controls",
+                "operation": "insert_front",
+                "value": [
+                    {
+                        "fast_resets_panel@fast_resets_panel": {}
+                    }
+                ]
+            }
+        ]
+    },
+    "play_or_create_stack_bedrock@world_section.launch_world_button_stack_def": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "play_on_realm_button"
+            }
+        ]
+    }
+}

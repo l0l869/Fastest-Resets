@@ -92,7 +92,8 @@ checkFaults()   ;compatibility checks
     {
         if packActive
         {
-            PACK_VERSION := StrSplit(SubStr(A_LoopReadLine, 16, 9), ",") ; theres definetly a better way of doing this
+            RegExMatch(A_LoopReadLine, "[0-9]+, [0-9]+, [0-9]+", PACK_VERSION)
+            PACK_VERSION := StrSplit(StrReplace(PACK_VERSION, A_Space, ""), ",")
             PACK_VERSION := PACK_VERSION[1]*100+PACK_VERSION[2]*10+PACK_VERSION[3]
             break
         }

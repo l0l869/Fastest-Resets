@@ -62,13 +62,16 @@ loadConfigs()
 ; buttons
 
 InstallPack:
-    if FileExist(MCdir . "\resource_packs\FastestRes")  ; automatic update pack soon
+    if FileExist(MCdir . "\resource_packs\FR-Pack")
     {
         MsgBox, Fastest Resets Pack already imported.
     }
     Else
     {
-        Run, Assets\MC-Resources\FastestResets.mcpack
+        FileOpen(MCdir . "\minecraftpe\global_resource_packs.json", "w").Write("[`n   {`n      ""pack_id"" : ""8eb36656-a7fe-4342-93e4-e443db3e8d3b"",`n      ""version"" : [ 1, 1, 2 ]`n   }`n]").Close()
+        FileCreateDir, %MCdir%\resource_packs\FR-Pack
+        FileCopyDir, %A_ScriptDir%\assets\FR-Pack, %MCdir%\resource_packs\FR-Pack, 1
+        Gosub, restartMC
     }
 return
 

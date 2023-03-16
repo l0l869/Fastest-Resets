@@ -1,0 +1,44 @@
+{
+    "selector_stack_panel": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "accessibility_button"
+            },
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "spacer_0"
+            }
+        ]
+    },
+    "selector_stack_panel/controls_and_settings_selector_pane": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "profile_button"
+            },
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "view_subscriptions_button"
+            },
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "how_to_play_button"
+            }
+        ]
+    },
+    "selector_stack_panel/controls_and_settings_selector_pane/global_texture_pack_button": {
+        "ignored": "(not $is_pregame)"
+    },
+    "selector_stack_panel/addons_selector_panel": {
+        "ignored": "(not $include_world_section and (not $include_realm_section or not $realms_pack_feature_enabled)) or (not $is_pregame)"
+    },
+    "section_content_panels/packs_sections": {
+        "ignored": "(not $include_world_section and (not $include_realm_section or not $realms_pack_feature_enabled)) or (not $is_pregame)"
+    }
+}
