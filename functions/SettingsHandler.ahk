@@ -43,27 +43,114 @@
     worldCount := ComObjCreate("Shell.Application").NameSpace(MCdir . "\minecraftWorlds").Items.Count
         GuiControl,, textWorlds, #Worlds: %worldCount%
 
-    if WinExist("Minecraft"){
-        MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-        FileGetVersion, MCversion, % MCproc.GetModuleFileNameEx()
-            GuiControl,, textMCVersion, MCVersion: %MCversion%
-    }
-
     updateAttempts(0)
+    if !latestVersions
+        checkUpdates()
+    checkFaults()
 }
 
-checkFaults()
+getMCVersion()
 {
-    ; Test if minecraft is open
-    if WinExist("Minecraft")
-        WinActivate
-    else 
-    {    
-        MsgBox, Minecraft is not open!
-        Return
+    IfWinNotExist, Minecraft
+        return -1
+    
+    MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+    FileGetVersion, MCversion, % MCproc.GetModuleFileNameEx()
+        GuiControl,, textMCVersion, MCVersion: %MCversion%
+        ;GuiControl, Enable, checkboxAutoReset if i want to call this func at every reset
+
+    switch MCversion
+    {
+        case "1.16.10.2": offsetsCoords := [0x036A3C18, 0xA8, 0x10, 0x190, 0x28, 0x0, 0x2C]
+        case "1.16.1.2": offsetsCoords := [0x0369D0A8, 0xA8, 0x10, 0x954]
+        case "1.16.0.58": offsetsCoords := [0x038464D8, 0x190, 0x20, 0x0, 0x2C]
+        case "1.16.0.57": offsetsCoords := [0x03846490, 0x190, 0x20, 0x0, 0x2C]
+        case "1.16.0.51": offsetsCoords := [0x035C6298, 0x190, 0x20, 0x0, 0x2C]
+        case "1.14.60.5": offsetsCoords := [0x0307D3A0, 0x30, 0xF0, 0x110]
+        case "1.2.13.54": offsetsCoords := [0x01FA1888, 0x0, 0x10, 0x10, 0x20, 0x0, 0x2C]
+        Default: 
+            GuiControl,, textMCVersion, MCVersion: %MCversion%`nAutoReset not supported.
+            GuiControl, Disable, checkboxAutoReset
+            GuiControl,, checkboxAutoReset, 0
+            Gosub, checkboxAutoReset
     }
+
+    return MCversion
+}
+
+Log(entry){
+    FileAppend, %entry%`n, configs\logs.txt
+}
+
+checkFaults()   ;compatibility checks
+{
+    WinWait, Minecraft
+
+    getMCVersion()
     
-    ; button checks
-    
-    ;other stuff like pack version, compatibility warnings, pack detection, update checks
+    Loop, Read, %MCdir%\minecraftpe\global_resource_packs.json     ; packActive? PACK_VERSION
+    {
+        if packActive
+        {
+            PACK_VERSION := StrSplit(SubStr(A_LoopReadLine, 16, 9), ",") ; theres definetly a better way of doing this
+            PACK_VERSION := PACK_VERSION[1]*100+PACK_VERSION[2]*10+PACK_VERSION[3]
+            break
+        }
+        if InStr(A_LoopReadLine,"8eb36656-a7fe-4342-93e4-e443db3e8d3b")
+            packActive := true
+    }
+
+    if !packActive
+        MsgBox,, Warning, Fastest Resets Pack isn't activated.
+}
+
+checkUpdates()
+{
+    req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    req.Open("GET", "https://pastebin.com/raw/dbABGVM4", true) ; latest version
+    req.Send()
+    req.WaitForResponse()
+    latestVersions := StrSplit(req.ResponseText, ",")
+
+    ; idk if i should have this
+    ; if (PACK_VERSION < latestVersions[2])
+    ;     MsgBox,, Update,% "New Pack Update!`n" . PACK_VERSION . " => " . latestVersions[2]
+
+    if (SCRIPT_VERSION < latestVersions[1])
+        MsgBox 4, Update,% "New Update Available!`n" . SCRIPT_VERSION . " => " . latestVersions[1] . "`n`nDo you want to update?",,
+
+    IfMsgBox, Yes
+        downloadLatest(latestVersions)
+
+    return latestVersions
+}
+
+downloadLatest(latestVersions)
+{
+    scriptMainDir := RegExReplace(A_ScriptDir, "\\\w+$", "")
+    tempFolder := A_ScriptDir . "\temp"
+    RegExMatch(latestVersions[3], "Fastest\.Resets\.v[0-9]+\.[0-9]+\.zip", newVersionZipName)
+    FileCreateDir, %tempFolder%
+    UrlDownloadToFile % latestVersions[3], %tempFolder%\%newVersionZipName%
+    if(ErrorLevel || !FileExist(tempFolder . "\" . newVersionZipName))
+    {
+        FileRemoveDir, %tempFolder%, 1
+        MsgBox, Update Failed!
+        return -1
+    }
+    sh := ComObjCreate("Shell.Application")
+    sh.Namespace( tempFolder ).CopyHere( sh.Namespace( tempFolder . "\" . newVersionZipName ).items, 4|16 )
+    FileDelete, %tempFolder%\%newVersionZipName%
+    newVersionFolderName := StrReplace(RTrim(newVersionZipName, ".zip"), ".", A_Space,, 2)
+
+    FileCopy, configs\configs.ini, %tempFolder%\%newVersionFolderName%\configs, 1
+    FileCopy, configs\attempts.txt, %tempFolder%\%newVersionFolderName%\configs, 1
+    FileCopy, configs\seeds.txt, %tempFolder%\%newVersionFolderName%\configs, 1
+    FileCopy, configs\logs.txt, %tempFolder%\%newVersionFolderName%\configs, 1
+    FileMoveDir, %tempFolder%\%newVersionFolderName%, %scriptMainDir%, 1
+    FileRemoveDir, %A_ScriptDir%, 1
+
+    MsgBox, Update Complete!
+    Run, %scriptMainDir%\%newVersionFolderName%\Fastest-Resets.ahk
+    ExitApp, 1
 }

@@ -1,4 +1,5 @@
-﻿#SingleInstance, Force
+﻿#Include %A_ScriptDir%
+#SingleInstance, Force
 #NoTrayIcon
 #WinActivateForce
 SetBatchLines -1
@@ -51,7 +52,8 @@ Gui, add, Button  , y115 x165 w150 h25 gOpenMCDir, MC Directory
 Gui, Font, s13
 Gui, add, Text    , y145 x165 w150 vtextWorlds, #Worlds: -
 Gui, add, Text    , y170 x165 w150 vtextAttempts, #Attempts: -
-Gui, add, Text    , y195 x165 w150 vtextMCVersion, MC Version: -
+Gui, Font, s10
+Gui, add, Text    , y195 x165 w150 h30 vtextMCVersion, MC Version: Not Opened
 
 loadConfigs()
 

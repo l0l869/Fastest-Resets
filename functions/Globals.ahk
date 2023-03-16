@@ -2,12 +2,13 @@
 global MCproc
 global MCversion
 global xCoord
+global offsetsCoords
 global lastRestart
-
 
 ;===Script===
 global SCRIPT_VERSION := 20230314
-global PACK_VERSION := 1.1
+global PACK_VERSION := 112
+global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
 global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 

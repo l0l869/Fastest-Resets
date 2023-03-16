@@ -69,9 +69,9 @@ inGameReset()
 
     if autoReset
     {        
-        waitUntil(Func("getValue"),2000,10, "Float", 0x0369D0A8, 0xA8, 0x10, 0x954) ; when in world
-
-        xCoord := MCproc.read(MCproc.baseAddress + 0x0369D0A8, "Float", 0xA8, 0x10, 0x954)
+        waitUntil(Func("findPixel"),,,0x9234EB,winX2-20,winY2-20,40,40)
+        xCoord := getValue("Float", offsetsCoords*).value
+        Log("Run #" . runAttempts . ": " . xCoord)
             if (xCoord < minCoords Or xCoord > maxCoords)
                 inGameReset()
             else
@@ -82,22 +82,23 @@ inGameReset()
 findImage(image,x,y,dx,dy)
 {
     ImageSearch, outX, outY, x, y, x+dx, y+dy, assets/%image%.png
-    return !ErrorLevel
+    return {status: !ErrorLevel, X: outX, Y: outY}
 }
 
 findPixel(colour,x,y,dx,dy)
 {
     PixelSearch, outX, outY, x, y, x+dx, y+dy, colour, 3, RGB Fast
-    return !ErrorLevel
+    return {status: !ErrorLevel, X: outX, Y: outY}
 }
 
 getValue(dataType, baseOffset, offsets*)
 {
     value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
-    return (value < 100000 && 0 < value)
+    if (value < 100000 && 0 < value)
+        return {status: 1, value: value} 
 }
 
-waitUntil(Function, attempts := 500, checkDelay := 1, Args*)
+waitUntil(Function, attempts := 500, checkDelay := 1, Args*)    ; byRef Args* does not work sad
 {
     Loop, {
         if A_Index > %attempts%
@@ -106,8 +107,9 @@ waitUntil(Function, attempts := 500, checkDelay := 1, Args*)
             runAttempts := updateAttempts(-1)
             Exit
         }
-        if %Function%(Args*)
-            return 1
+        returnValue := %Function%(Args*)    ; wow this is bad
+        if returnValue.status
+            return returnValue
         Sleep, %checkDelay%
     }
 }
