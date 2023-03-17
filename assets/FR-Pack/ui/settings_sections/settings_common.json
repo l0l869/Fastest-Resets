@@ -80,7 +80,7 @@
                             "texture":"textures/ui/blue",
                             "anchor_to": "bottom_right",
                             "anchor_from": "bottom_right",
-                            "size": [1,1]
+                            "size": ["1px","1px"]
                         }
                     }
                 ]
@@ -102,16 +102,10 @@
 
     "toggle_button_control_2": {
         "type": "panel",
-        "$glyph_offset|default": [
-            5,
-            0
-        ],
+        "$glyph_offset|default": [5,0],
         "$glyph_anchor_from|default": "left_middle",
         "$glyph_anchor_to|default": "left_middle",
-        "$button_label_offset|default": [
-            34,
-            0
-        ],
+        "$button_label_offset|default": [0,0],
         "layer": 2,
         "controls": [
             {
@@ -119,14 +113,8 @@
                     "type": "label",
                     "anchor_from": "left_middle",
                     "anchor_to": "left_middle",
-                    "size": [
-                        "100% - 38px",
-                        "default"
-                    ],
-                    "max_size": [
-                        "100% - 38px",
-                        "100% - 4px"
-                    ],
+                    "size": ["100% - 38px","default"],
+                    "max_size": ["100% - 38px","100% - 4px"],
                     "offset": "$button_label_offset",
                     "text": "$button_text",
                     "layer": 3,

@@ -14,6 +14,18 @@ resetInGame:
         MCproc := "" ; close handle of old mc
         MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
 
+        WinGetPos, winX, winY, winWidth, winHeight, Minecraft
+        winX += 8
+        winY += 30
+        winWidth -= 16
+        winHeight -= 38
+        winX2 := winX+winWidth
+        winY2 := winY+winHeight
+
+        runAttempts := updateAttempts()
+        if autoRestart
+            shouldRestart(runAttempts)
+
         inGameReset()
     }
 return
@@ -26,50 +38,43 @@ Return
 
 inGameReset()
 {
-    WinGetPos, winX, winY, winWidth, winHeight, Minecraft
-    winX2 := winX+winWidth
-    winY2 := winY+winHeight
-    runAttempts := updateAttempts()
-    if autoRestart
-        shouldRestart(runAttempts)
-
     Send, {Esc}
     waitUntil(Func("findPixel"),,,0xF54242,winX2-20,winY2-20,40,40) ; Quit
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0
+    MouseClick,, winX+2, winY+winHeight*.025,,0
 
     waitUntil(Func("findPixel"),,,0xF57B42,winX2-20,winY2-20,40,40) ; CreateNew
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0
+    MouseClick,, winX+2, winY+winHeight*.025,,0
     Sleep, %keyDelay%
 
     waitUntil(Func("findPixel"),,,0xF5D742,winX2-20,winY2-20,40,40) ; CreateNewWorld
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0
+    MouseClick,, winX+2, winY+winHeight*.025,,0
     Sleep, %keyDelay%
 
     waitUntil(Func("findPixel"),,,0x4E42F5,winX2-20,winY2-20,40,40)
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.025,,0            ; Easy
+    MouseClick,, winX+2, winY+winHeight*.025,,0                     ; Easy
     Sleep, %keyDelay%
 
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.075,,0            ; Coords
+    MouseClick,, winX+2, winY+winHeight*.075,,0                     ; Coords
     Sleep, %keyDelay%
 
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.125,,0            ; SimDis
+    MouseClick,, winX+2, winY+winHeight*.125,,0                     ; SimDis
     Sleep, %keyDelay%
 
     if setSeed
     {
-        MouseClick,, winX+10, winY+30+(winHeight-30)*.175,,0        ; Seed
+        MouseClick,, winX+2, winY+winHeight*.175,,0                 ; Seed
         Sleep, 1
         IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Send, %selectedSeed%
         Sleep, %keyDelay%
     }
 
-    MouseClick,, winX+10, winY+30+(winHeight-30)*.25,,0             ; Create
+    MouseClick,, winX+2, winY+winHeight*.225,,0                     ; Create
     MouseMove, winX+winWidth/2, winY+winHeight/2
 
     if autoReset
     {        
-        waitUntil(Func("findPixel"),,,0x9234EB,winX2-20,winY2-20,40,40)
+        waitUntil(Func("findPixel"),15000,,0x9234EB,winX2-20,winY2-20,40,40)
         xCoord := getValue("Float", offsetsCoords*).value
         Log("Run #" . runAttempts . ": " . xCoord)
             if (xCoord < minCoords Or xCoord > maxCoords)
@@ -98,10 +103,11 @@ getValue(dataType, baseOffset, offsets*)
         return {status: 1, value: value} 
 }
 
-waitUntil(Function, attempts := 500, checkDelay := 1, Args*)    ; byRef Args* does not work sad
+waitUntil(Function, waitTime := 5000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
 {
+    waitTime += A_TickCount
     Loop, {
-        if A_Index > %attempts%
+        if A_TickCount >= %waitTime%
         {
             MsgBox, Timed Out!
             runAttempts := updateAttempts(-1)

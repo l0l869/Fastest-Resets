@@ -1,17 +1,22 @@
+;===Script===
+global SCRIPT_VERSION := 20230317
+global PACK_VERSION := 114
+global latestVersions
+global iniFile := A_ScriptDir . "\configs\configs.ini"
+global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
+
 ;===Process===
 global MCproc
 global MCversion
 global xCoord
 global offsetsCoords
 global lastRestart
-
-;===Script===
-global SCRIPT_VERSION := 20230314
-global PACK_VERSION := 112
-global latestVersions
-global iniFile := A_ScriptDir . "\configs\configs.ini"
-global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
-
+global winX
+global winY
+global winX2
+global winY2
+global winWidth
+global winHeight
 
 ;===Config===
 global setSeed

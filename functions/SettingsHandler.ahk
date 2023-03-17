@@ -46,7 +46,7 @@
     updateAttempts(0)
     if !latestVersions
         checkUpdates()
-    checkFaults()
+    configureCompatibility()
 }
 
 getMCVersion()
@@ -57,9 +57,20 @@ getMCVersion()
     MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
     FileGetVersion, MCversion, % MCproc.GetModuleFileNameEx()
         GuiControl,, textMCVersion, MCVersion: %MCversion%
-        ;GuiControl, Enable, checkboxAutoReset if i want to call this func at every reset
 
-    switch MCversion
+    return MCversion
+}
+
+Log(entry){
+    FileAppend, %entry%`n, configs\logs.txt
+}
+
+configureCompatibility()   ;compatibility checks
+{
+    WinWait, Minecraft
+
+    ;GuiControl, Enable, checkboxAutoReset if i want to call this func at every reset
+    switch getMCVersion()
     {
         case "1.16.10.2": offsetsCoords := [0x036A3C18, 0xA8, 0x10, 0x190, 0x28, 0x0, 0x2C]
         case "1.16.1.2": offsetsCoords := [0x0369D0A8, 0xA8, 0x10, 0x954]
@@ -74,19 +85,6 @@ getMCVersion()
             GuiControl,, checkboxAutoReset, 0
             Gosub, checkboxAutoReset
     }
-
-    return MCversion
-}
-
-Log(entry){
-    FileAppend, %entry%`n, configs\logs.txt
-}
-
-checkFaults()   ;compatibility checks
-{
-    WinWait, Minecraft
-
-    getMCVersion()
     
     Loop, Read, %MCdir%\minecraftpe\global_resource_packs.json     ; packActive? PACK_VERSION
     {

@@ -18,7 +18,7 @@
                             "texture":"textures/ui/orange",
                             "anchor_to": "bottom_right",
                             "anchor_from": "bottom_right",
-                            "size": [1,1]
+                            "size": ["1px","1px"]
                         }
                     }
                 ]
