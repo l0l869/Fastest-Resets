@@ -1,5 +1,5 @@
 ﻿#Include functions/ClassMem.ahk
-#Include functions/Timer copy.ahk
+#Include functions/Timer.ahk
 Exit
 
 resetInGame:
