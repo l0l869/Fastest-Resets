@@ -1,5 +1,5 @@
 ;===Script===
-global SCRIPT_VERSION := 20230317
+global SCRIPT_VERSION := 20230410
 global PACK_VERSION := 114
 global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
@@ -18,6 +18,8 @@ global winY2
 global winWidth
 global winHeight
 
+global Timer1
+
 ;===Config===
 global setSeed
 global autoReset
@@ -29,7 +31,6 @@ global resetThreshold
 global keyDelay
 global keybindRestartMc
 global keybindReset
-
 
 ;===Stats===
 global runAttempts

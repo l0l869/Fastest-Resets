@@ -1,4 +1,5 @@
 ﻿#Include functions/ClassMem.ahk
+#Include functions/Timer copy.ahk
 Exit
 
 resetInGame:
@@ -22,9 +23,10 @@ resetInGame:
         winX2 := winX+winWidth
         winY2 := winY+winHeight
 
-        runAttempts := updateAttempts()
-        if autoRestart
-            shouldRestart(runAttempts)
+        if !Timer1
+            Timer1 := new Timer(25,25,"TopRight",0,35,"MOJANGLES")
+        Else
+            Timer1.reset()
 
         inGameReset()
     }
@@ -38,8 +40,13 @@ Return
 
 inGameReset()
 {
+    runAttempts := updateAttempts()
+    if autoRestart
+        shouldRestart(runAttempts)
+
     Send, {Esc}
     waitUntil(Func("findPixel"),,,0xF54242,winX2-20,winY2-20,40,40) ; Quit
+    Sleep, 25
     MouseClick,, winX+2, winY+winHeight*.025,,0
 
     waitUntil(Func("findPixel"),,,0xF57B42,winX2-20,winY2-20,40,40) ; CreateNew
@@ -72,16 +79,15 @@ inGameReset()
     MouseClick,, winX+2, winY+winHeight*.225,,0                     ; Create
     MouseMove, winX+winWidth/2, winY+winHeight/2
 
-    if autoReset
-    {        
-        waitUntil(Func("findPixel"),15000,,0x9234EB,winX2-20,winY2-20,40,40)
-        xCoord := getValue("Float", offsetsCoords*).value
-        Log("Run #" . runAttempts . ": " . xCoord)
-            if (xCoord < minCoords Or xCoord > maxCoords)
-                inGameReset()
-            else
-                SoundBeep, 1000
-    }
+    waitUntil(Func("findPixel"),15000,,0x9234EB,winX2-20,winY2-20,40,40)
+    xCoord := getValue("Float", offsetsCoords*).value
+    Log("Run #" . runAttempts . ": " . xCoord)
+    
+    if ((xCoord < minCoords Or xCoord > maxCoords) && autoReset)
+        return inGameReset()
+
+    if (Timer1 && waitUntil(Func("changedValue"),,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
+        Timer1.start()
 }
 
 findImage(image,x,y,dx,dy)
@@ -103,7 +109,14 @@ getValue(dataType, baseOffset, offsets*)
         return {status: 1, value: value} 
 }
 
-waitUntil(Function, waitTime := 5000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
+changedValue(Tvalue, dataType, baseOffset, offsets*)
+{
+    value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
+    if ((value != Tvalue || (GetKeyState("W") || GetKeyState("S"))) && (value < 100000 && 0 < value))
+        return {status: 1, value: value}
+}
+
+waitUntil(Function, waitTime := 15000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
 {
     waitTime += A_TickCount
     Loop, {
@@ -131,8 +144,7 @@ updateAttempts(amount := 1)
     }
     txt.Close()
     
-    Gui, MainWin:Default ; to be able to update text
-    GuiControl,, textAttempts, #Attempts: %attempts% 
+    GuiControl, MainWin:, textAttempts, #Attempts: %attempts% 
     return attempts
 }
 
