@@ -1,5 +1,5 @@
 ;===Script===
-global SCRIPT_VERSION := 20230410
+global SCRIPT_VERSION := 20230411
 global PACK_VERSION := 114
 global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
@@ -18,7 +18,13 @@ global winY2
 global winWidth
 global winHeight
 
-global Timer1
+;===Timer===
+global timerActivated
+global timerOffset
+global timerAnchor
+global timerSize
+global timerColour
+global timerDecimalPlaces
 
 ;===Config===
 global setSeed
@@ -56,8 +62,8 @@ global hotkeyboxResetKey
 ;global textRestartMcKey
 ;----hotkeysWin
 ;global buttonSaveKeybinds
-global hotkeyboxNewRestartMc
-global hotkeyboxNewResetKey
+;global hotkeyboxNewRestartMc
+;global hotkeyboxNewResetKey
 ;global textResetKey
 ;global textRestartMcKey
 ;----
@@ -73,6 +79,9 @@ global checkboxAutoRestart
         ;Keydelay
 global editboxKeyDelay
 ;global textDelay
+
+        ;Timer
+global checkboxTimer
 
         ;Stats
 global textWorlds

@@ -39,21 +39,23 @@ Gui, add, Edit    , y305 x80 w45 veditboxMaxCoords geditboxMaxCoords +Number -Mu
 Gui, add, Edit    , y330 x80 w45 veditboxMinCoords geditboxMinCoords +Number -Multi Center
 Gui, add, Checkbox, y355 x40 vcheckboxAutoReset gcheckboxAutoReset, Auto Reset
 
-Gui, add, GroupBox, y5 x165 w150 h75, Extra
+Gui, add, GroupBox, y5 x165 w150 h100, Extra
 Gui, add, Edit    , y25 x175 w25 veditboxResetThreshold geditboxResetThreshold +Number -Multi Center
 Gui, add, Checkbox, y30 x205 vcheckboxAutoRestart gcheckboxAutoRestart, Auto Restart
 Gui, add, Text    , y55 x210, Key Delay
 Gui, add, Edit    , y50 x175 w25 veditboxKeyDelay geditboxKeyDelay +Number -Multi Center
+Gui, add, Button  , y75 x175 w25 h25 gTimerSettings, ⚙️
+Gui, add, Checkbox, y80 x205 vcheckboxTimer gcheckboxTimer, Timer
 
-Gui, add, Button  , y85 x165 w150 h25 gInstallPack, Install Resource Pack 
+Gui, add, Button  , y110 x165 w150 h25 gInstallPack, Install Resource Pack 
 
-Gui, add, Button  , y115 x165 w150 h25 gOpenMCDir, MC Directory
+Gui, add, Button  , y140 x165 w150 h25 gOpenMCDir, MC Directory
 
 Gui, Font, s13
-Gui, add, Text    , y145 x165 w150 vtextWorlds, #Worlds: -
-Gui, add, Text    , y170 x165 w150 vtextAttempts, #Attempts: -
+Gui, add, Text    , y170 x165 w150 vtextWorlds, #Worlds: -
+Gui, add, Text    , y195 x165 w150 vtextAttempts, #Attempts: -
 Gui, Font, s10
-Gui, add, Text    , y195 x165 w150 h30 vtextMCVersion, MC Version: Not Opened
+Gui, add, Text    , y220 x165 w150 h30 vtextMCVersion, MC Version: Not Opened
 
 loadConfigs()
 
@@ -83,15 +85,15 @@ EditHotkeys:
     Gui, hotkeysWin:Show, w150 h145, Edit Hotkeys
     Gui, hotkeysWin:add, Hotkey, x10 y20 w130 vhotkeyboxNewResetKey
     Gui, hotkeysWin:add, Hotkey, x10 y65 w130 vhotkeyboxNewRestartMc
-    Gui, hotkeysWin:add, Text, x10 y5,Reset Key
-    Gui, hotkeysWin:add, Text, x10 y50,Restart MC Key
+    Gui, hotkeysWin:add, Text  , x10 y5,Reset Key
+    Gui, hotkeysWin:add, Text  , x10 y50,Restart MC Key
     Gui, hotkeysWin:add, Button, x10 y100 w130 h30 gSaveHotkeys,Save
 
     IniRead, iniKey, %iniFile%, Hotkeys, Reset
-        GuiControl,hotkeysWin:, hotkeyboxNewResetKey, %iniKey%
+        GuiControl, hotkeysWin:, hotkeyboxNewResetKey, %iniKey%
 
     IniRead, iniKey, %iniFile%, Hotkeys, RestartMinecraft
-        GuiControl,hotkeysWin:, hotkeyboxNewRestartMc, %iniKey%
+        GuiControl, hotkeysWin:, hotkeyboxNewRestartMc, %iniKey%
 return
 
 SaveHotkeys:
@@ -126,6 +128,62 @@ AddSeed:
     }
 return
 
+TimerSettings:
+    Gui, timerSettings:Show, w250 h210, Timer
+    Gui, timerSettings:Font, s10 Arial
+
+    Gui, timerSettings:add, GroupBox, y5 w70 h75, Offset
+    Gui, timerSettings:add, Text    , y25 x25, X
+    Gui, timerSettings:add, Edit    , y22 x40 w30 veditboxX +Number -Multi Center
+    Gui, timerSettings:add, Text    , y50 x25, Y
+    Gui, timerSettings:add, Edit    , y47 x40 w30 veditboxY +Number -Multi Center
+
+    Gui, timerSettings:add, GroupBox, y5 x90 w150 h75, Anchor
+    Gui, timerSettings:add, DDL     , y35 x110 w110 h75 vdropdownlistAnchor, TopLeft|TopRight|BottomLeft|BottomRight
+
+    Gui, timerSettings:add, GroupBox, y80 x12 w150 h75, Font
+    Gui, timerSettings:add, Text    , y100 x25, Size
+    Gui, timerSettings:add, Edit    , y120 x25 w30 veditboxSize +Number -Multi Center
+    Gui, timerSettings:add, Text    , y100 x75, Colour (Hex)
+    Gui, timerSettings:add, Edit    , y120 x75 w70 veditboxColour -Multi Center
+
+    Gui, timerSettings:add, GroupBox, y80 x170 w70 h75, Precision
+    Gui, timerSettings:add, DDL     , y110 x188 w35 h75 vdropdownlistDecimalPlaces, 1|2|3
+
+    Gui, timerSettings:add, Button  , y160 x12 w230 h40 gTimerSave, Save
+
+    IniRead, iniOffset, %iniFile%, Timer, Offset
+        Offsets := StrSplit(iniOffset, ",")
+        GuiControl, timerSettings:, editboxX, % Offsets[1]
+        GuiControl, timerSettings:, editboxY, % Offsets[2]
+
+    IniRead, iniAnchor, %iniFile%, Timer, Anchor
+        GuiControl, timerSettings:, dropdownlistAnchor, % "|" . iniAnchor . "||TopLeft|TopRight|BottomLeft|BottomRight"
+
+    IniRead, iniSize, %iniFile%, Timer, Size
+        GuiControl, timerSettings:, editboxSize, %iniSize%
+
+    IniRead, iniColour, %iniFile%, Timer, Colour
+        GuiControl, timerSettings:, editboxColour, %iniColour%
+
+    IniRead, inidecimalPlaces, %iniFile%, Timer, decimalPlaces
+        GuiControl, timerSettings:, dropdownlistDecimalPlaces, % "|" . inidecimalPlaces . "||1|2|3"
+
+return
+
+TimerSave:
+    Gui, timerSettings:Submit
+    Gui, timerSettings:Destroy
+
+    IniWrite, % editboxX . "," . editboxY, %iniFile%, Timer, Offset
+    IniWrite, % dropdownlistAnchor, %iniFile%, Timer, Anchor
+    IniWrite, % editboxSize, %iniFile%, Timer, Size
+    IniWrite, % editboxColour, %iniFile%, Timer, Colour
+    IniWrite, % dropdownlistDecimalPlaces, %iniFile%, Timer, decimalPlaces
+
+    loadTimerConfigs()
+return
+
 ; edits, checkboxes
 
 editboxKeyDelay:
@@ -154,6 +212,27 @@ checkboxAutoRestart:
         autoRestart := false
         GuiControl, Disable, editboxResetThreshold
     }   
+return
+
+checkboxTimer:
+    GuiControlGet, timerActivated,, checkboxTimer
+    if timerActivated
+    {
+        IniWrite, true, %iniFile%, Timer, timerActivated
+        timerActivated := true
+        if !Timer1
+            global Timer1 := new Timer()
+    }
+    Else
+    {
+        IniWrite, false, %iniFile%, Timer, timerActivated
+        timerActivated := false
+        if Timer1
+        {
+            Timer1.reset()
+            Timer1 := ""
+        }
+    }  
 return
 
 editboxMaxCoords:
@@ -225,6 +304,14 @@ IfMsgBox, Yes
     gosub SaveHotkeys
 IfMsgBox, No
     Gui, hotkeysWin:Destroy
+return
+
+timerSettingsGuiClose:
+MsgBox,4, Timer Settings, Save?
+IfMsgBox, Yes
+    gosub TimerSave
+IfMsgBox, No
+    Gui, timerSettings:Destroy
 return
 
 MainWinGuiEscape:

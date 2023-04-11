@@ -40,6 +40,12 @@
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
         keyDelay := iniKeyDelay
 
+    IniRead, timerActivated, %iniFile%, Timer, timerActivated
+    If timerActivated = true
+        GuiControl,, checkboxTimer, 1
+    Gosub checkboxTimer
+    loadTimerConfigs()
+
     worldCount := ComObjCreate("Shell.Application").NameSpace(MCdir . "\minecraftWorlds").Items.Count
         GuiControl,, textWorlds, #Worlds: %worldCount%
 
@@ -47,6 +53,16 @@
     if !latestVersions
         checkUpdates()
     configureCompatibility()
+}
+
+loadTimerConfigs()
+{
+    IniRead, timerOffset, %iniFile%, Timer, Offset
+        timerOffset := StrSplit(timerOffset, ",")
+    IniRead, timerAnchor, %iniFile%, Timer, Anchor
+    IniRead, timerSize, %iniFile%, Timer, Size
+    IniRead, timerColour, %iniFile%, Timer, Colour
+    IniRead, timerDecimalPlaces, %iniFile%, Timer, decimalPlaces
 }
 
 getMCVersion()
@@ -73,7 +89,7 @@ configureCompatibility()   ;compatibility checks
     switch getMCVersion()
     {
         case "1.16.10.2": offsetsCoords := [0x036A3C18, 0xA8, 0x10, 0x190, 0x28, 0x0, 0x2C]
-        case "1.16.1.2": offsetsCoords := [0x0369D0A8, 0xA8, 0x10, 0x954]
+        case "1.16.1.2" : offsetsCoords := [0x0369D0A8, 0xA8, 0x10, 0x954]
         case "1.16.0.58": offsetsCoords := [0x038464D8, 0x190, 0x20, 0x0, 0x2C]
         case "1.16.0.57": offsetsCoords := [0x03846490, 0x190, 0x20, 0x0, 0x2C]
         case "1.16.0.51": offsetsCoords := [0x035C6298, 0x190, 0x20, 0x0, 0x2C]

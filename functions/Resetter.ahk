@@ -15,18 +15,16 @@ resetInGame:
         MCproc := "" ; close handle of old mc
         MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
 
-        WinGetPos, winX, winY, winWidth, winHeight, Minecraft
-        winX += 8
-        winY += 30
-        winWidth -= 16
-        winHeight -= 38
-        winX2 := winX+winWidth
-        winY2 := winY+winHeight
+        ; SetTimer, updateTimerPosition, 0 ; temporary
 
-        if !Timer1
-            Timer1 := new Timer(25,25,"TopRight",0,35,"MOJANGLES")
-        Else
+        if Timer1
             Timer1.reset()
+
+        if !timerActivated
+            Timer1 := ""
+
+        if (!Timer1 && timerActivated)
+            global Timer1 := new Timer()
 
         inGameReset()
     }
@@ -37,6 +35,19 @@ restartMC:
     Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
     lastRestart := updateAttempts(0)
 Return
+
+updateTimerPosition:
+    WinGetPos, winX, winY, winWidth, winHeight, Minecraft
+    winX += 8
+    winY += 30
+    winWidth -= 16
+    winHeight -= 38
+    winX2 := winX+winWidth
+    winY2 := winY+winHeight
+
+    if (MCproc.read(MCproc.baseAddress + 0x036A4B00, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2 && Timer1)
+        Timer1.stop()
+return
 
 inGameReset()
 {
