@@ -142,7 +142,7 @@ checkUpdates()
 
 downloadLatest(latestVersions)
 {
-    scriptMainDir := RegExReplace(A_ScriptDir, "\\\w+$", "")
+    scriptMainDir := RegExReplace(A_ScriptDir, "\\[^\\]*$", "")
     tempFolder := A_ScriptDir . "\temp"
     RegExMatch(latestVersions[3], "Fastest\.Resets\.v[0-9]+\.[0-9]+\.zip", newVersionZipName)
     FileCreateDir, %tempFolder%
