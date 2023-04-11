@@ -1,5 +1,6 @@
 ﻿#Include functions/ClassMem.ahk
 #Include functions/Timer.ahk
+SetTimer, updateTimerPosition, 0
 Exit
 
 resetInGame:
@@ -14,8 +15,6 @@ resetInGame:
     {
         MCproc := "" ; close handle of old mc
         MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-
-        ; SetTimer, updateTimerPosition, 0 ; temporary
 
         if Timer1
             Timer1.reset()

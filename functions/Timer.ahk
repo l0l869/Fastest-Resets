@@ -109,5 +109,3 @@ Class Timer
         return {W: textSizeW, H:textSizeH}
     }
 }
-
-SetTimer, updateTimerPosition, 0 ; temporary
