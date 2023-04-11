@@ -1,0 +1,127 @@
+{
+    "custom_bg": {
+        "type": "image",
+        "texture": "textures/ui/screen_background",
+        "layer": -10,
+        "ignored": "$is_holographic",
+        "$screen_background_alpha|default": 0.50,
+        "alpha": "$screen_background_alpha"
+    },
+    "pause_screen@common.base_screen": {
+        "variables": [
+            {
+                "requires": "$ignore_edu_pause",
+                "$screen_content": "pause.pause_screen_content",
+                "$screen_bg_content": "pause.custom_bg"
+            }
+        ]
+    },
+    "players_label": {
+        "anchor_from": "top_left",
+        "anchor_to": "top_left",
+        "text_alignment": "center",
+        "offset": [
+            0,
+            "25%"
+        ]
+    },
+    "pause_screen_content": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "insert_back",
+                "value": [
+                    {
+                        "players_label@pause.players_label": {}
+                    },
+                    {
+                        "return_to_game_button1@pause.quit_button": {
+                            "anchor_to": "top_left",
+                            "anchor_from": "top_left",
+                            "size": [
+                                5,
+                                "5%"
+                            ],
+                            "$hover_button_texture": "textures/ui/button_borderless_light",
+                            "$pressed_button_texture": "textures/ui/button_borderless_light"
+                        }
+                    },
+                    {
+                        "red_image":{
+                            "type":"image",
+                            "texture":"textures/ui/red",
+                            "anchor_to": "bottom_right",
+                            "anchor_from": "bottom_right",
+                            "size": ["1px","1px"]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "menu_background/button_panel": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "feedback_button"
+            }
+        ]
+    },
+    "pause_screen_menu": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "pause_logo_panel"
+            },
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "top_indent"
+            }
+        ]
+    },
+    "skin_panel": {
+        "anchor_from": "left_middle",
+        "anchor_to": "left_middle",
+        "offset": [
+            0,
+            0
+        ]
+    },
+    "the_rest_panel": {
+        "size": [
+            "100% + 120px",
+            "fill"
+        ]
+    },
+    "info_panel@pause.pause_screen_border": {
+        "size": [
+            125,
+            "100%"
+        ],
+        "alpha": 0
+    },
+    "info_panel_background@pause.transparent_background": {
+        "visible": false
+    },
+    "invite_players_button_panel": {
+        "ignored": true
+    },
+    "player_list": {
+        "modifications": [
+            {
+                "array_name": "controls",
+                "operation": "remove",
+                "control_name": "players_label"
+            }
+        ]
+    },
+    "transparent_background": {
+        "type": "image",
+        "texture": "textures/ui/menubackground",
+        "layer": 1,
+        "alpha": 0.6
+    }
+}

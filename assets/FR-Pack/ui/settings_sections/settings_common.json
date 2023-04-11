@@ -1,0 +1,139 @@
+{
+    "settings_content":{
+        "modifications":[
+            {
+                "array_name":"controls",
+                "operation":"insert_front",
+                "value":[
+                    {
+                        "easy_difficulty@settings_common.section_toggle_base": {
+                            "$toggle_name": "#world_difficulty_radio_easy",
+                            "$unchecked_control": "common_toggles.toggle_unchecked",
+                            "$checked_control": "common_toggles.toggle_unchecked",
+                            "$button_type_panel": "settings_common.toggle_button_control_2",
+                            "size": [5,"5%"],
+                            "layer": 3000,
+                            "$hover_texture": "textures/ui/button_borderless_light",
+                            "$pressed_texture": "textures/ui/button_borderless_light",
+                            "$pressed_no_hover_texture": "textures/ui/button_borderless_light",
+                            "$border_color": [0,0,0]
+                        }
+                    },
+                    {
+                        "show_coords@settings_common.section_toggle_base": {
+                            "$toggle_name": "show_coordinates",
+                            "$option_binding_name": "#show_coordinates",
+                            "$unchecked_control": "common_toggles.toggle_unchecked",
+                            "$checked_control": "common_toggles.toggle_unchecked",
+                            "$button_type_panel": "settings_common.toggle_button_control_2",
+                            "size": [5,"5%"],
+                            "offset":[0,"5%"],
+                            "layer": 3001
+                        }
+                    },
+                    {
+                        "sim_distance@settings_common.option_slider": {
+                            "$option_label": "#server_sim_distance_slider_label",
+                            "$slider_name": "server_sim_distance",
+                            "size": [20,"3%"],
+                            "anchor_from":"top_left",
+                            "anchor_to":"top_left",
+                            "offset": [-5,"10%"],
+                            "$slider_value_binding_name": "#server_sim_distance",
+                            "$option_enabled_binding_name": "#server_sim_distance_enabled",
+                            "$slider_steps_binding_name": "#server_sim_distance_steps",
+                            "layer": 3002
+                        }
+                    },
+                    {
+                        "seed_selector@settings_common.option_text_edit": {
+                            "$option_binding_name": "#world_seed",
+                            "$option_enabled_binding_name": "#world_seed_enabled",
+                            "$text_box_name": "world_seed_text_box",
+                            "anchor_from":"top_left",
+                            "anchor_to":"top_left",
+                            "size": [5,"5%"],
+                            "offset":[0,"15%"],
+                            "layer": 3000
+                            //"visible": "$is_pregame" older versions dont have $is_pregame, i think
+                            //"$font_size":"small"
+                        }
+                    },
+                    {
+                        "create_or_play_button@settings_common.action_button": {
+                            "$pressed_button_name": "play_world_button",
+                            "$focus_override_up": "FOCUS_OVERRIDE_STOP",
+                            "variables": {
+                              "requires": "not ($is_world_edit)",
+                              "$pressed_button_name": "create_world_button"
+                            },
+                            "anchor_from":"top_left",
+                            "anchor_to":"top_left",
+                            "size": [ 5, "5%" ],
+                            "offset":[0,"20%"],
+                            "layer": 3004
+                          }
+                    },
+                    {
+                        "blue_image":{
+                            "type":"image",
+                            "texture":"textures/ui/blue",
+                            "anchor_to": "bottom_right",
+                            "anchor_from": "bottom_right",
+                            "size": ["1px","1px"]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
+
+
+    // "settings_content": { // for newer versions that add solid background
+    //     "modifications": [
+    //         {
+    //             "array_name": "controls",
+    //             "control_name": "background",
+    //             "operation": "remove"
+    //         }
+    //     ]
+    // },
+
+    "toggle_button_control_2": {
+        "type": "panel",
+        "$glyph_offset|default": [5,0],
+        "$glyph_anchor_from|default": "left_middle",
+        "$glyph_anchor_to|default": "left_middle",
+        "$button_label_offset|default": [0,0],
+        "layer": 2,
+        "controls": [
+            {
+                "tab_button_text": {
+                    "type": "label",
+                    "anchor_from": "left_middle",
+                    "anchor_to": "left_middle",
+                    "size": ["100% - 38px","default"],
+                    "max_size": ["100% - 38px","100% - 4px"],
+                    "offset": "$button_label_offset",
+                    "text": "$button_text",
+                    "layer": 3,
+                    "color": "$text_color",
+                    "alpha": "$content_alpha",
+                    "$button_text_binding_type|default": "none",
+                    "$button_text_grid_collection_name|default": "",
+                    "$button_text_binding_condition|default": "none",
+                    "bindings": [
+                        {
+                            "binding_type": "$button_text_binding_type",
+                            "binding_condition": "$button_text_binding_condition",
+                            "binding_collection_name": "$button_text_grid_collection_name",
+                            "binding_name": "$button_text",
+                            "binding_name_override": "$button_text"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

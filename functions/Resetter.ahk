@@ -1,4 +1,6 @@
 ﻿#Include functions/ClassMem.ahk
+#Include functions/Timer.ahk
+SetTimer, updateTimerPosition, 0
 Exit
 
 resetInGame:
@@ -11,9 +13,17 @@ resetInGame:
     }
     IfWinActive, Minecraft
     {
-        mcProc := "" ; close handle of old mc
-        mcProc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
-        DynPtrBaseAddr := mcProc.baseAddress + 0x0369D0A8 ;ptr to player's x coords
+        MCproc := "" ; close handle of old mc
+        MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+
+        if Timer1
+            Timer1.reset()
+
+        if !timerActivated
+            Timer1 := ""
+
+        if (!Timer1 && timerActivated)
+            global Timer1 := new Timer()
 
         inGameReset()
     }
@@ -25,83 +35,111 @@ restartMC:
     lastRestart := updateAttempts(0)
 Return
 
+updateTimerPosition:
+    WinGetPos, winX, winY, winWidth, winHeight, Minecraft
+    winX += 8
+    winY += 30
+    winWidth -= 16
+    winHeight -= 38
+    winX2 := winX+winWidth
+    winY2 := winY+winHeight
+
+    if (MCproc.read(MCproc.baseAddress + 0x036A4B00, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2 && Timer1)
+        Timer1.stop()
+return
+
 inGameReset()
 {
     runAttempts := updateAttempts()
     if autoRestart
         shouldRestart(runAttempts)
 
-    MouseGetPos, prevX, prevY
     Send, {Esc}
-    findButton("Quit", 400, 400)
-    Sleep, 1500
+    waitUntil(Func("findPixel"),,,0xF54242,winX2-20,winY2-20,40,40) ; Quit
+    Sleep, 25
+    MouseClick,, winX+2, winY+winHeight*.025,,0
 
-    findButton("CreateNew", 500, 500)
+    waitUntil(Func("findPixel"),,,0xF57B42,winX2-20,winY2-20,40,40) ; CreateNew
+    MouseClick,, winX+2, winY+winHeight*.025,,0
     Sleep, %keyDelay%
 
-    findButton("CreateNewWorld", 750, 500)
+    waitUntil(Func("findPixel"),,,0xF5D742,winX2-20,winY2-20,40,40) ; CreateNewWorld
+    MouseClick,, winX+2, winY+winHeight*.025,,0
     Sleep, %keyDelay%
 
-    findButton("Easy", 400, 400)
+    waitUntil(Func("findPixel"),,,0x4E42F5,winX2-20,winY2-20,40,40)
+    MouseClick,, winX+2, winY+winHeight*.025,,0                     ; Easy
     Sleep, %keyDelay%
 
-    IniRead, iniBtn, %iniFile%, Macro, Coords
-    Click, %iniBtn%                     ;Coords
+    MouseClick,, winX+2, winY+winHeight*.075,,0                     ; Coords
     Sleep, %keyDelay%
 
-    IniRead, iniBtn, %iniFile%, Macro, SimDis
-    Click, %iniBtn%                     ;SimDis
+    MouseClick,, winX+2, winY+winHeight*.125,,0                     ; SimDis
     Sleep, %keyDelay%
 
     if setSeed
     {
-        IniRead, iniBtn, %iniFile%, Macro, Seed
-        Click, %iniBtn%                 ;Seed
+        MouseClick,, winX+2, winY+winHeight*.175,,0                 ; Seed
         Sleep, 1
         IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
         Send, %selectedSeed%
         Sleep, %keyDelay%
     }
 
-    IniRead, iniBtn, %iniFile%, Macro, Create
-    Click, %iniBtn%                     ;Create
-    MouseMove, %prevX%, %prevY%
+    MouseClick,, winX+2, winY+winHeight*.225,,0                     ; Create
+    MouseMove, winX+winWidth/2, winY+winHeight/2
 
-    if autoReset
-    {
-        IniRead, worldGenTimeSleep, %iniFile%, Macro, WorldGenTime
-        Sleep, worldGenTimeSleep - 1000 ; -1000: incase world loads faster than expected
-        
-        findButton("Heart", 2, 2, 1000, -1, false)
+    waitUntil(Func("findPixel"),15000,,0x9234EB,winX2-20,winY2-20,40,40)
+    xCoord := getValue("Float", offsetsCoords*).value
+    Log("Run #" . runAttempts . ": " . xCoord)
+    
+    if ((xCoord < minCoords Or xCoord > maxCoords) && autoReset)
+        return inGameReset()
 
-        xCoord := mcProc.read(DynPtrBaseAddr, "Float", 0xA8, 0x10, 0x954)
-            if (xCoord < minCoords Or xCoord > maxCoords)
-                inGameReset()
-            else
-                SoundBeep, 1000
-    }
+    if (Timer1 && waitUntil(Func("changedValue"),,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
+        Timer1.start()
 }
 
-findButton(btn, dx := 1920, dy := 1080, attempts := 200, findDelay := 1, doClick := true)
+findImage(image,x,y,dx,dy)
 {
-    IniRead, iniBtn, %iniFile%, Macro, %btn%
-    boundsBtn := StrSplit(iniBtn, A_Space)
+    ImageSearch, outX, outY, x, y, x+dx, y+dy, assets/%image%.png
+    return {status: !ErrorLevel, X: outX, Y: outY}
+}
 
+findPixel(colour,x,y,dx,dy)
+{
+    PixelSearch, outX, outY, x, y, x+dx, y+dy, colour, 3, RGB Fast
+    return {status: !ErrorLevel, X: outX, Y: outY}
+}
+
+getValue(dataType, baseOffset, offsets*)
+{
+    value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
+    if (value < 100000 && 0 < value)
+        return {status: 1, value: value} 
+}
+
+changedValue(Tvalue, dataType, baseOffset, offsets*)
+{
+    value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
+    if ((value != Tvalue || (GetKeyState("W") || GetKeyState("S"))) && (value < 100000 && 0 < value))
+        return {status: 1, value: value}
+}
+
+waitUntil(Function, waitTime := 15000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
+{
+    waitTime += A_TickCount
     Loop, {
-        if A_Index > %attempts%
+        if A_TickCount >= %waitTime%
         {
-            MsgBox, Couldn't find %btn%, try doing setup to calibrate
+            MsgBox, Timed Out!
             runAttempts := updateAttempts(-1)
             Exit
         }
-        ImageSearch, X, Y, boundsBtn[1], boundsBtn[2], boundsBtn[1]+dx, boundsBtn[2]+dy, assets/%btn%.png
-        if ErrorLevel = 0
-        {
-            if doClick
-                Click, %X% %Y%
-            return 1
-        }
-        Sleep, %findDelay%
+        returnValue := %Function%(Args*)    ; wow this is bad
+        if returnValue.status
+            return returnValue
+        Sleep, %checkDelay%
     }
 }
 
@@ -116,7 +154,7 @@ updateAttempts(amount := 1)
     }
     txt.Close()
     
-    GuiControl,, textAttempts, #Attempts: %attempts% ; doesnt update if win isnt active
+    GuiControl, MainWin:, textAttempts, #Attempts: %attempts% 
     return attempts
 }
 

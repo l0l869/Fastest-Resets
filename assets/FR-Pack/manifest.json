@@ -1,0 +1,18 @@
+{
+	"format_version": 1,
+
+	"header": {
+		"name": "Fastest Resets (Macro) [v2.0-a.4]",
+		"description": "1.13 to 1.16.1",
+		"uuid": "8eb36656-a7fe-4342-93e4-e443db3e8d3b",
+		"min_engine_version": [1,2,6],
+		"version": [1,1,4]
+	},
+	"modules": [
+		{
+			"type": "resources",
+			"uuid": "cde71573-1331-4b51-b7a1-19cff04a788e",
+			"version": [1,1,4]
+		}
+	]
+}

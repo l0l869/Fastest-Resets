@@ -2,33 +2,24 @@
 
 A Macro for MCBE Speedrunning that makes reseting easier and faster
 
+## Info
+* Supported Auto Resetting Versions: 1.2.13 (soon), 1.14.60, 1.16.0.51, 1.16.0.57, 1.16.0.58, 1.16.1, 1.16.10
+* The Resource Pack works between versions: 1.14 -> 1.16.10
+
+Since the pack doesn't work pre 1.14, resetting wont be possible on those versions until a newer version of the pack is released.
+
+
+
+* Keep the key delay at a minimum of 35ms (or 1000ms/Recording FPS) for verification purposes.
+
+* The autosplitting of the timer as of now works only for 1.16.1, more versions will become available in the future
+
+* Player coordinates are read through process memory from pointers with the ClassMem file 
+
 ## Setup
-### [Temporary Video Tutorial](https://youtu.be/5vl_HD6E0Oc) 
 
-### Steps
+1. Download [AHK V1](https://www.autohotkey.com/download/ahk-install.exe) (this was made before AHK V2 release)
 
-1. Download the latest release, either the .exe version (if you dont have AHK V1 installed but I suggest you get AHK) or the regular .ahk version
-
-2. Unzip and run "Fastest-Resets(.exe/.ahk)"
+2. Unzip and run "Fastest-Resets.ahk"
 
 3. Install the resource pack to assist the macro
-
-4. Take screenshots of your buttons as your buttons may look different to the examples in the assets folder
-
-5. You can then press Set-up at the World list screen to test that the macro can find all the buttons
-
-6. A Pop-up saying "Success" would appear to indicate you're ready for resetting, otherwise it would abort if failed
-
-
-## Additional Info
-* Keep the delay at a minimum of 35ms for verification purposes
-
-* Make sure when taking screenshots the buttons aren't highlighed green
-
-* The macro can be used for newer versions of Minecraft but can't garauntee it will work for older versions, remember to redo setup as UI may be different
-
-* AHK2EXE was used to compile into the exe version (hence why the file size is bigger) so windows defender may not like it
-
-* No performance differences between the two versions
-
-* Player coordinates are read through process memory from a pointer with the ClassMem file 
