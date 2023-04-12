@@ -40,7 +40,7 @@
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
         keyDelay := iniKeyDelay
 
-    loadTimerConfigs()
+    Gosub, UpdateTimerPosition
     IniRead, timerActivated, %iniFile%, Timer, timerActivated
     If timerActivated = true
         GuiControl,, checkboxTimer, 1

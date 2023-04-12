@@ -89,14 +89,14 @@ inGameReset()
     MouseClick,, winX+2, winY+winHeight*.225,,0                     ; Create
     MouseMove, winX+winWidth/2, winY+winHeight/2
 
-    waitUntil(Func("findPixel"),15000,,0x9234EB,winX2-20,winY2-20,40,40)
+    waitUntil(Func("findPixel"),,,0x9234EB,winX2-20,winY2-20,40,40)
     xCoord := getValue("Float", offsetsCoords*).value
     Log("Run #" . runAttempts . ": " . xCoord)
     
     if ((xCoord < minCoords Or xCoord > maxCoords) && autoReset)
         return inGameReset()
 
-    if (Timer1 && waitUntil(Func("changedValue"),,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
+    if (Timer1 && waitUntil(Func("changedValue"),60000,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
         Timer1.start()
 }
 
@@ -126,7 +126,7 @@ changedValue(Tvalue, dataType, baseOffset, offsets*)
         return {status: 1, value: value}
 }
 
-waitUntil(Function, waitTime := 15000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
+waitUntil(Function, waitTime := 20000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
 {
     waitTime += A_TickCount
     Loop, {
