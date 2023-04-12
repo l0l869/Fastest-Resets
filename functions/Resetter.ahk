@@ -44,7 +44,7 @@ updateTimerPosition:
     winX2 := winX+winWidth
     winY2 := winY+winHeight
 
-    if (MCproc.read(MCproc.baseAddress + 0x036A4B00, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2 && Timer1)
+    if (Timer1 && MCproc.read(MCproc.baseAddress + 0x036A4B00, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2)
         Timer1.stop()
 return
 

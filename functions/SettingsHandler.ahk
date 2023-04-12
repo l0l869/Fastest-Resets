@@ -40,14 +40,14 @@
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
         keyDelay := iniKeyDelay
 
+    loadTimerConfigs()
     IniRead, timerActivated, %iniFile%, Timer, timerActivated
     If timerActivated = true
         GuiControl,, checkboxTimer, 1
     Gosub checkboxTimer
-    loadTimerConfigs()
 
     worldCount := ComObjCreate("Shell.Application").NameSpace(MCdir . "\minecraftWorlds").Items.Count
-        GuiControl,, textWorlds, #Worlds: %worldCount%
+        GuiControl, MainWin:, textWorlds, #Worlds: %worldCount%
 
     updateAttempts(0)
     if !latestVersions

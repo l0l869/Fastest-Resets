@@ -6,6 +6,7 @@ SetBatchLines -1
 SetWorkingDir %A_ScriptDir%
 SetTitleMatchMode, 3
 SendMode, Input
+SetMouseDelay, -1
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 
@@ -220,6 +221,7 @@ checkboxTimer:
     {
         IniWrite, true, %iniFile%, Timer, timerActivated
         timerActivated := true
+        loadTimerConfigs()
         if !Timer1
             global Timer1 := new Timer()
     }
