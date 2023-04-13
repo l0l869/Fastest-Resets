@@ -91,9 +91,9 @@ inGameReset()
 
     waitUntil(Func("findPixel"),,,0x9234EB,winX2-20,winY2-20,40,40)
     xCoord := getValue("Float", offsetsCoords*).value
-    Log("Run #" . runAttempts . ": " . xCoord)
+    Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1])
     
-    if ((xCoord < minCoords Or xCoord > maxCoords) && autoReset)
+    if (autoReset && (xCoord < minCoords Or xCoord > maxCoords))
         return inGameReset()
 
     if (Timer1 && waitUntil(Func("changedValue"),60000,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
@@ -122,7 +122,7 @@ getValue(dataType, baseOffset, offsets*)
 changedValue(Tvalue, dataType, baseOffset, offsets*)
 {
     value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
-    if ((value != Tvalue || (GetKeyState("W") || GetKeyState("S"))) && (value < 100000 && 0 < value))
+    if ((value != Tvalue || (GetKeyState("W") || GetKeyState("S") || GetKeyState("Space"))) && (value < 100000 && 0 < value))
         return {status: 1, value: value}
 }
 

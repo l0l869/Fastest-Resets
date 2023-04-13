@@ -5,6 +5,7 @@ Class Timer
         this.refreshRate := 0
         this.Font := "MOJANGLES"
         this.timeDisplayed := "0:00.000"
+        loadTimerConfigs()
 
         global textTimer
         Gui, Timer:Show, % "x0 " . " y0" . " w" . A_ScreenWidth . " h" . A_ScreenHeight

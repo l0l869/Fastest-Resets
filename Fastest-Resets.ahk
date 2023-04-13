@@ -221,7 +221,6 @@ checkboxTimer:
     {
         IniWrite, true, %iniFile%, Timer, timerActivated
         timerActivated := true
-        loadTimerConfigs()
         if !Timer1
             global Timer1 := new Timer()
     }

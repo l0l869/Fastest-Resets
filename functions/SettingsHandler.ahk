@@ -72,7 +72,7 @@ getMCVersion()
     
     MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
     FileGetVersion, MCversion, % MCproc.GetModuleFileNameEx()
-        GuiControl,, textMCVersion, MCVersion: %MCversion%
+        GuiControl, MainWin:, textMCVersion, MCVersion: %MCversion%
 
     return MCversion
 }
@@ -88,7 +88,7 @@ configureCompatibility()   ;compatibility checks
     ;GuiControl, Enable, checkboxAutoReset if i want to call this func at every reset
     switch getMCVersion()
     {
-        case "1.16.10.2": offsetsCoords := [0x036A3C18, 0xA8, 0x10, 0x190, 0x28, 0x0, 0x2C]
+        case "1.16.10.2": offsetsCoords := [0x036A3C18, 0xA8, 0x10, 0x954]
         case "1.16.1.2" : offsetsCoords := [0x0369D0A8, 0xA8, 0x10, 0x954]
         case "1.16.0.58": offsetsCoords := [0x038464D8, 0x190, 0x20, 0x0, 0x2C]
         case "1.16.0.57": offsetsCoords := [0x03846490, 0x190, 0x20, 0x0, 0x2C]
@@ -96,9 +96,9 @@ configureCompatibility()   ;compatibility checks
         case "1.14.60.5": offsetsCoords := [0x0307D3A0, 0x30, 0xF0, 0x110]
         case "1.2.13.54": offsetsCoords := [0x01FA1888, 0x0, 0x10, 0x10, 0x20, 0x0, 0x2C]
         Default: 
-            GuiControl,, textMCVersion, MCVersion: %MCversion%`nAutoReset not supported.
+            GuiControl, MainWin:, textMCVersion, MCVersion: %MCversion%`nAutoReset not supported.
             GuiControl, Disable, checkboxAutoReset
-            GuiControl,, checkboxAutoReset, 0
+            GuiControl, MainWin:, checkboxAutoReset, 0
             Gosub, checkboxAutoReset
     }
     
