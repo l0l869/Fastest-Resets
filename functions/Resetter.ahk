@@ -50,6 +50,8 @@ return
 
 inGameReset()
 {
+    if GetKeyState("Ctrl") && GetKeyState("Space")
+        Exit
     runAttempts := updateAttempts()
     if autoRestart
         shouldRestart(runAttempts)
@@ -96,7 +98,7 @@ inGameReset()
     if (autoReset && (xCoord < minCoords Or xCoord > maxCoords))
         return inGameReset()
 
-    if (Timer1 && waitUntil(Func("changedValue"),60000,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
+    if (Timer1 && waitUntil(Func("changedValue"),300000,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
         Timer1.start()
 }
 
@@ -126,7 +128,7 @@ changedValue(Tvalue, dataType, baseOffset, offsets*)
         return {status: 1, value: value}
 }
 
-waitUntil(Function, waitTime := 20000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
+waitUntil(Function, waitTime := 30000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
 {
     waitTime += A_TickCount
     Loop, {
