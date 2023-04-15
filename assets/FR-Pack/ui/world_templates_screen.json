@@ -20,31 +20,13 @@
         ]
     },
     "world_template_screen_content_stack_panel":{
-        "modifications":[
+        "controls": [
+            { "generate_random_panel@world_templates.generate_random_button": {} },
             {
-                "array_name":"controls",
-                "operation":"remove",
-                "control_name":"template_list_panel"
-            },
-            {
-                "array_name":"controls",
-                "operation":"remove",
-                "control_name":"realms_plus_list_panel"
-            },
-            {
-                "array_name":"controls",
-                "operation":"remove",
-                "control_name":"template_list_panel"
-            },
-            {
-                "array_name":"controls",
-                "operation":"remove",
-                "control_name":"suggested_content_panel"
-            },
-            {
-                "array_name":"controls",
-                "operation":"remove",
-                "control_name":"realms_info_panel"
+                "generate_random_button_bottom_padding": {
+                "type": "panel",
+                "size": [ "100%", 2 ]
+                }
             }
         ]
     }

@@ -8,13 +8,8 @@
         "alpha": "$screen_background_alpha"
     },
     "pause_screen@common.base_screen": {
-        "variables": [
-            {
-                "requires": "$ignore_edu_pause",
-                "$screen_content": "pause.pause_screen_content",
-                "$screen_bg_content": "pause.custom_bg"
-            }
-        ]
+        "$screen_content": "pause.pause_screen_content",
+        "$screen_bg_content": "pause.custom_bg"
     },
     "players_label": {
         "anchor_from": "top_left",
@@ -35,7 +30,7 @@
                         "players_label@pause.players_label": {}
                     },
                     {
-                        "return_to_game_button1@pause.quit_button": {
+                        "quit_button1@pause.quit_button": {
                             "anchor_to": "top_left",
                             "anchor_from": "top_left",
                             "size": [
@@ -52,7 +47,8 @@
                             "texture":"textures/ui/red",
                             "anchor_to": "bottom_right",
                             "anchor_from": "bottom_right",
-                            "size": ["1px","1px"]
+                            "size": ["1px","1px"],
+                            "layer":3000
                         }
                     }
                 ]
@@ -60,12 +56,10 @@
         ]
     },
     "menu_background/button_panel": {
-        "modifications": [
-            {
-                "array_name": "controls",
-                "operation": "remove",
-                "control_name": "feedback_button"
-            }
+        "controls": [
+            { "return_to_game_button@pause.return_to_game_button": {} },
+            { "settings_button@pause.settings_button": {} },
+            { "quit_button@pause.quit_button": {} }
         ]
     },
     "pause_screen_menu": {
@@ -123,5 +117,8 @@
         "texture": "textures/ui/menubackground",
         "layer": 1,
         "alpha": 0.6
+    },
+    "player_panel@pause.pause_screen_border": { //1.2.13 dumb fix
+        "size": [ 120, "100%" ]
     }
 }
