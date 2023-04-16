@@ -59,24 +59,24 @@ inGameReset()
     Send, {Esc}
     waitUntil(Func("findPixel"),,,0xF54242,winX2-20,winY2-20,40,40) ; Quit
     Sleep, 25
-    MouseClick,, winX+2, winY+winHeight*.025,,0
+    MouseClick,, winX+3, winY+winHeight*.025,,0
 
     waitUntil(Func("findPixel"),,,0xF57B42,winX2-20,winY2-20,40,40) ; CreateNew
-    MouseClick,, winX+2, winY+winHeight*.025,,0
+    MouseClick,, winX+3, winY+winHeight*.025,,0
     Sleep, %keyDelay%
 
     waitUntil(Func("findPixel"),,,0xF5D742,winX2-20,winY2-20,40,40) ; CreateNewWorld
-    MouseClick,, winX+2, winY+winHeight*.025,,0
+    MouseClick,, winX+3, winY+winHeight*.025,,0
     Sleep, %keyDelay%
 
     waitUntil(Func("findPixel"),,,0x4E42F5,winX2-20,winY2-20,40,40)
-    MouseClick,, winX+2, winY+winHeight*.025,,0                     ; Easy
+    MouseClick,, winX+3, winY+winHeight*.025,,0                     ; Easy
     Sleep, %keyDelay%
 
-    MouseClick,, winX+2, winY+winHeight*.075,,0                     ; Coords
+    MouseClick,, winX+3, winY+winHeight*.075,,0                     ; Coords
     Sleep, %keyDelay%
 
-    MouseClick,, winX+2, winY+winHeight*.125,,0                     ; SimDis
+    MouseClick,, winX+3, winY+winHeight*.125,,0                     ; SimDis
     Sleep, %keyDelay%
 
     if setSeed

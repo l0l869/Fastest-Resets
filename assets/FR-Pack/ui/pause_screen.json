@@ -8,8 +8,13 @@
         "alpha": "$screen_background_alpha"
     },
     "pause_screen@common.base_screen": {
-        "$screen_content": "pause.pause_screen_content",
-        "$screen_bg_content": "pause.custom_bg"
+        "variables": [
+            {
+                "requires": true,
+                "$screen_content": "pause.pause_screen_content",
+                "$screen_bg_content": "pause.custom_bg"
+            }
+        ]
     },
     "players_label": {
         "anchor_from": "top_left",
