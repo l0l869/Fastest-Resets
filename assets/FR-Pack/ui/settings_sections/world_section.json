@@ -114,11 +114,11 @@
     },
     "game_section": {
         "modifications": [
-            {
-                "array_name": "controls",
-                "operation": "remove",
-                "control_name": "unlock_template_options_panel"
-            },
+            // {                                        1.2.13 doesnt like, temporary fix
+            //     "array_name": "controls",
+            //     "operation": "remove",
+            //     "control_name": "unlock_template_options_panel"
+            // },
             {
                 "array_name": "controls",
                 "operation": "remove",
