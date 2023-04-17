@@ -44,8 +44,17 @@ updateTimerPosition:
     winX2 := winX+winWidth
     winY2 := winY+winHeight
 
-    if (Timer1 && MCproc.read(MCproc.baseAddress + 0x036A4B00, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2)
+    ; autosplitting
+    baseOffset := ""
+    if (offsetsCoords[1] == 0x036A3C18)
+        baseOffset := 0x036AB670 ;1.16.10
+
+    if (offsetsCoords[1] == 0x0369D0A8)
+        baseOffset := 0x036A4B00 ;1.16.1
+
+    if ((Timer1 && baseOffset) && MCproc.read(MCproc.baseAddress + baseOffset, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2)
         Timer1.stop()
+        ; 0x036AB670
 return
 
 inGameReset()
@@ -116,9 +125,17 @@ findPixel(colour,x,y,dx,dy)
 
 getValue(dataType, baseOffset, offsets*)
 {
-    value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
-    if (value < 100000 && 0 < value)
-        return {status: 1, value: value} 
+    While (!value)
+	{
+    	value := MCproc.read(MCproc.baseAddress + baseOffset + 1, dataType, offsets*)
+    	if (value < 100000 && 0 < value)
+        	return {status: 1, value: value}
+
+        if (A_Index > 3000)
+            break
+	}
+    msgbox % "Value: " . value . ", PID: " . MCproc.PID . ", " . MCproc.currentProgram . ", bAddress: " . MCproc.baseAddress . " + " . baseOffset
+	Exit
 }
 
 changedValue(Tvalue, dataType, baseOffset, offsets*)
