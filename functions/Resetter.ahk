@@ -54,7 +54,6 @@ updateTimerPosition:
 
     if ((Timer1 && baseOffset) && MCproc.read(MCproc.baseAddress + baseOffset, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2)
         Timer1.stop()
-        ; 0x036AB670
 return
 
 inGameReset()
@@ -127,7 +126,7 @@ getValue(dataType, baseOffset, offsets*)
 {
     While (!value)
 	{
-    	value := MCproc.read(MCproc.baseAddress + baseOffset + 1, dataType, offsets*)
+    	value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
     	if (value < 100000 && 0 < value)
         	return {status: 1, value: value}
 
