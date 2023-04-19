@@ -121,6 +121,9 @@ configureCompatibility()   ;compatibility checks
 
 checkUpdates()
 {
+    if(!DllCall("Wininet.dll\InternetGetConnectedState", "Str", 0x40,"Int",0))
+        return 0
+
     req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
     req.Open("GET", "https://pastebin.com/raw/dbABGVM4", true) ; latest version
     req.Send()
