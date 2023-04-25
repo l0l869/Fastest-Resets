@@ -16,29 +16,25 @@ CoordMode, Pixel, Screen
 Menu Tray, Icon, %A_ScriptDir%\assets\_Icon.ico
 Gui, MainWin:Default
 Gui, -MaximizeBox
-Gui, Show , w325 h385, Fastest Resets
+Gui, Show , w325 h285, Fastest Resets
 Gui, Color, EEEEEE
 Gui, Font , s10, Arial
 
-Gui, add, GroupBox, y5 w150 h150, Hotkeys
-Gui, add, Text    , y25 x25, Reset Key
-Gui, add, Text    , y70 x25, Restart MC Key
-Gui, add, Hotkey  , y40 x25 w120 vhotkeyboxResetKey +Disabled
-Gui, add, Hotkey  , y85 x25 w120 vhotkeyboxRestartMc +Disabled
-Gui, add, Button  , w120 h20 gEditHotkeys, Edit Hotkeys
+Gui, add, GroupBox, y5 w150 h50, Hotkeys
+Gui, add, Button  , y25 x25 w120 h20 gEditHotkeys, Edit Hotkeys
 
-Gui, add, GroupBox, y160 x10 w150 h120, Set Seed
-Gui, add, Edit    , y180 x25 w120 veditboxSeed gAddSeed +Number -Multi
-Gui, add, Button  , y205 x25 w120 h20 vbuttonAddSeed, Add Seed
-Gui, add, DDL     , y230 x25 w120 vdropdownlistSeed gdropdownlistSeed
-Gui, add, Checkbox, y260 x25 vcheckboxSetSeed gcheckboxSetSeed, Set Seed
+Gui, add, GroupBox, y60 x10 w150 h120, Set Seed
+Gui, add, Edit    , y80 x25 w120 veditboxSeed gAddSeed +Number -Multi
+Gui, add, Button  , y105 x25 w120 h20 vbuttonAddSeed, Add Seed
+Gui, add, DDL     , y130 x25 w120 vdropdownlistSeed gdropdownlistSeed
+Gui, add, Checkbox, y160 x25 vcheckboxSetSeed gcheckboxSetSeed, Set Seed
 
 Gui, add, GroupBox, x10 w150 h90, Auto Reset
-Gui, add, Text    , y310 x35, xMax
-Gui, add, Text    , y335 x35, xMin
-Gui, add, Edit    , y305 x80 w45 veditboxMaxCoords geditboxMaxCoords +Number -Multi Center
-Gui, add, Edit    , y330 x80 w45 veditboxMinCoords geditboxMinCoords +Number -Multi Center
-Gui, add, Checkbox, y355 x40 vcheckboxAutoReset gcheckboxAutoReset, Auto Reset
+Gui, add, Text    , y210 x35, xMax
+Gui, add, Text    , y235 x35, xMin
+Gui, add, Edit    , y205 x80 w45 veditboxMaxCoords geditboxMaxCoords +Number -Multi Center
+Gui, add, Edit    , y230 x80 w45 veditboxMinCoords geditboxMinCoords +Number -Multi Center
+Gui, add, Checkbox, y255 x40 vcheckboxAutoReset gcheckboxAutoReset, Auto Reset
 
 Gui, add, GroupBox, y5 x165 w150 h100, Extra
 Gui, add, Edit    , y25 x175 w25 veditboxResetThreshold geditboxResetThreshold +Number -Multi Center
@@ -83,18 +79,23 @@ OpenMCDir:
 return
 
 EditHotkeys:
-    Gui, hotkeysWin:Show, w150 h145, Edit Hotkeys
-    Gui, hotkeysWin:add, Hotkey, x10 y20 w130 vhotkeyboxNewResetKey
-    Gui, hotkeysWin:add, Hotkey, x10 y65 w130 vhotkeyboxNewRestartMc
+    Gui, hotkeysWin:Show, w170 h195
+    Gui, hotkeysWin:add, Hotkey, x10 y20 w150 vhotkeyboxNewResetKey
+    Gui, hotkeysWin:add, Hotkey, x10 y65 w150 vhotkeyboxNewRestartMc
+    Gui, hotkeysWin:add, Hotkey, x10 y110 w150 vhotkeyboxStopResetKey
     Gui, hotkeysWin:add, Text  , x10 y5,Reset Key
     Gui, hotkeysWin:add, Text  , x10 y50,Restart MC Key
-    Gui, hotkeysWin:add, Button, x10 y100 w130 h30 gSaveHotkeys,Save
+    Gui, hotkeysWin:add, Text  , x10 y95,Stop Reset Key
+    Gui, hotkeysWin:add, Button, x10 y150 w150 h30 gSaveHotkeys,Save
 
     IniRead, iniKey, %iniFile%, Hotkeys, Reset
         GuiControl, hotkeysWin:, hotkeyboxNewResetKey, %iniKey%
 
     IniRead, iniKey, %iniFile%, Hotkeys, RestartMinecraft
         GuiControl, hotkeysWin:, hotkeyboxNewRestartMc, %iniKey%
+
+    IniRead, iniKey, %iniFile%, Hotkeys, StopReset
+        GuiControl, hotkeysWin:, hotkeyboxStopResetKey, %iniKey%
 return
 
 SaveHotkeys:
@@ -103,6 +104,7 @@ SaveHotkeys:
 
     IniWrite, %hotkeyboxNewResetKey%, %iniFile%, Hotkeys, Reset
     IniWrite, %hotkeyboxNewRestartMc%, %iniFile%, Hotkeys, RestartMinecraft
+    IniWrite, %hotkeyboxStopResetKey%, %iniFile%, Hotkeys, StopReset
 
     if A_IsCompiled
         Run, Fastest-Resets.exe

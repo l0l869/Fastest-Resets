@@ -29,18 +29,18 @@
         GuiControl,, editboxResetThreshold, %iniResetThreshold%
 
     IniRead, iniKey, %iniFile%, Hotkeys, Reset
-        GuiControl,, hotkeyboxResetKey, %iniKey%
-        Hotkey, %iniKey%, resetInGame
+        Hotkey, %iniKey%, ResetInGame
         
     IniRead, iniKey, %iniFile%, Hotkeys, RestartMinecraft
-        GuiControl,, hotkeyboxRestartMc, %iniKey%
-        Hotkey, %iniKey%, restartMC
+        Hotkey, %iniKey%, RestartMC
+
+    IniRead, iniKey, %iniFile%, Hotkeys, StopReset
+        Hotkey, %iniKey%, StopReset
 
     IniRead, iniKeyDelay, %iniFile%, Settings, keyDelay
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
         keyDelay := iniKeyDelay
 
-    Gosub, UpdateTimerPosition
     IniRead, timerActivated, %iniFile%, Timer, timerActivated
     If timerActivated = true
         GuiControl,, checkboxTimer, 1
