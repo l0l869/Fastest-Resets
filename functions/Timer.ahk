@@ -58,6 +58,7 @@ Class Timer
     {
         this.elapsedTick := A_TickCount-this.startTick
         GuiControl, Timer:, textTimer, % this.FormatTime(this.elapsedTick)
+        this.checkAutoSplit()
     }
 
     FormatTime(ms)
@@ -80,6 +81,8 @@ Class Timer
 
     anchorTo()
     {
+        getWinDimensions("Minecraft")
+
         textSize := this.getTextSize()
         switch (timerAnchor)
         {
@@ -100,6 +103,24 @@ Class Timer
         GuiControl, Timer:Move, textTimer, % "x" . anchorX " y" . anchorY
     }
 
+    checkAutoSplit()
+    {
+        ;##################### Old Method ######################
+        ; baseOffset := ""
+        ; if (offsetsCoords[1] == 0x036A3C18)
+        ;     baseOffset := 0x036AB670 ;1.16.10
+
+        ; if (offsetsCoords[1] == 0x0369D0A8)
+        ;     baseOffset := 0x036A4B00 ;1.16.1
+
+        ; if (baseOffset && MCproc.read(MCproc.baseAddress + baseOffset, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2)
+        ;     this.stop()
+
+        PixelGetColor, colourCode, winX2-1, winY2-1 ,RGB
+        if (colourCode == 0x241200)
+            this.stop()
+    }
+
     getTextSize(){
         ; GuiControlGet textSize, Timer:Pos, textTimer
         Gui, textSizeGUI:Font, % "s"timerSize, % this.Font
@@ -109,4 +130,15 @@ Class Timer
 
         return {W: textSizeW, H:textSizeH}
     }
+}
+
+getWinDimensions(Window)
+{
+    WinGetPos, winX, winY, winWidth, winHeight, %Window%
+    winX += 8
+    winY += 30
+    winWidth -= 16
+    winHeight -= 38
+    winX2 := winX+winWidth
+    winY2 := winY+winHeight
 }

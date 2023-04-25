@@ -80,7 +80,8 @@
                             "texture":"textures/ui/blue",
                             "anchor_to": "bottom_right",
                             "anchor_from": "bottom_right",
-                            "size": ["1px","1px"]
+                            "size": ["1px","1px"],
+                            "visible": "$is_world_create"
                         }
                     }
                 ]

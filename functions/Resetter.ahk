@@ -1,9 +1,8 @@
 ﻿#Include functions/ClassMem.ahk
 #Include functions/Timer.ahk
-SetTimer, updateTimerPosition, 0
 Exit
 
-resetInGame:
+ResetInGame:
     IfWinNotExist, Minecraft
     {
         MsgBox,4,, Minecraft is not open, do you want to launch?
@@ -11,8 +10,11 @@ resetInGame:
             Gosub, RestartMC
         return
     }
+
     IfWinActive, Minecraft
-    {
+    {   
+        isResetting := 1
+
         MCproc := "" ; close handle of old mc
         MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
 
@@ -25,101 +27,117 @@ resetInGame:
         if (!Timer1 && timerActivated)
             global Timer1 := new Timer()
 
+        getWinDimensions("Minecraft")
+
         inGameReset()
     }
 return
 
-restartMC:
+RestartMC:
     WinClose, Minecraft
     Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
     lastRestart := updateAttempts(0)
 Return
 
-updateTimerPosition:
-    WinGetPos, winX, winY, winWidth, winHeight, Minecraft
-    winX += 8
-    winY += 30
-    winWidth -= 16
-    winHeight -= 38
-    winX2 := winX+winWidth
-    winY2 := winY+winHeight
-
-    ; autosplitting
-    baseOffset := ""
-    if (offsetsCoords[1] == 0x036A3C18)
-        baseOffset := 0x036AB670 ;1.16.10
-
-    if (offsetsCoords[1] == 0x0369D0A8)
-        baseOffset := 0x036A4B00 ;1.16.1
-
-    if ((Timer1 && baseOffset) && MCproc.read(MCproc.baseAddress + baseOffset, "Char", 0x28, 0x198, 0x10, 0x150, 0x798) == 2)
-        Timer1.stop()
+StopReset:
+    isResetting := 0
 return
 
 inGameReset()
 {
-    if GetKeyState("Ctrl") && GetKeyState("Space")
-        Exit
     runAttempts := updateAttempts()
     if autoRestart
         shouldRestart(runAttempts)
 
-    Send, {Esc}
-    waitUntil(Func("findPixel"),,,0xF54242,winX2-20,winY2-20,40,40) ; Quit
-    Sleep, 25
-    MouseClick,, winX+3, winY+winHeight*.025,,0
-
-    waitUntil(Func("findPixel"),,,0xF57B42,winX2-20,winY2-20,40,40) ; CreateNew
-    MouseClick,, winX+3, winY+winHeight*.025,,0
-    Sleep, %keyDelay%
-
-    waitUntil(Func("findPixel"),,,0xF5D742,winX2-20,winY2-20,40,40) ; CreateNewWorld
-    MouseClick,, winX+3, winY+winHeight*.025,,0
-    Sleep, %keyDelay%
-
-    waitUntil(Func("findPixel"),,,0x4E42F5,winX2-20,winY2-20,40,40)
-    MouseClick,, winX+3, winY+winHeight*.025,,0                     ; Easy
-    Sleep, %keyDelay%
-
-    MouseClick,, winX+3, winY+winHeight*.075,,0                     ; Coords
-    Sleep, %keyDelay%
-
-    MouseClick,, winX+3, winY+winHeight*.125,,0                     ; SimDis
-    Sleep, %keyDelay%
-
-    if setSeed
+    While (isResetting)
     {
-        MouseClick,, winX+2, winY+winHeight*.175,,0                 ; Seed
-        Sleep, 1
-        IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
-        Send, %selectedSeed%
-        Sleep, %keyDelay%
+        PixelGetColor, colourCode, winX2-1, winY2-1 ,RGB
+        Switch colourCode
+        {
+            default:
+                if (A_Index == 1)
+                {
+                    Send, {Esc}
+                    Sleep, 75
+                }
+
+            case 0xF54242:
+                MouseClick,, winX+3, winY+winHeight*.025,,0
+                Sleep, %keyDelay%
+
+            case 0xF57B42:
+                MouseClick,, winX+3, winY+winHeight*.025,,0
+                Sleep, %keyDelay%
+
+            case 0xF5D742:
+                MouseClick,, winX+3, winY+winHeight*.025,,0
+                Sleep, %keyDelay%
+
+            case 0x4E42F5:
+                MouseClick,, winX+3, winY+winHeight*.025,,0
+                Sleep, %keyDelay%
+                MouseClick,, winX+3, winY+winHeight*.075,,0
+                Sleep, %keyDelay%
+                MouseClick,, winX+3, winY+winHeight*.125,,0
+                Sleep, %keyDelay%
+
+                if setSeed
+                {
+                    MouseClick,, winX+3, winY+winHeight*.175,,0
+                    Sleep, 1
+                    IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
+                    Send, %selectedSeed%
+                    Sleep, %keyDelay%
+                }
+
+                MouseClick,, winX+3, winY+winHeight*.225,,0
+                MouseMove, winX+winWidth/2, winY+winHeight/2
+                Sleep, 500
+
+            case 0x9234EB:
+                if(A_Index == 1)
+                {
+                    Send, {Esc}
+                    Sleep, 150
+                    Continue
+                }
+
+                xCoord := getValue("Float", offsetsCoords*)
+                Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1] . ", bAddress: " . MCproc.baseAddress)
+                
+                if (autoReset && (xCoord < minCoords || xCoord > maxCoords))
+                    return inGameReset()
+
+                if Timer1
+                {
+                    isResetting := 2
+                    threadWaitForMovement := Func("waitForMovement")
+                    setTimer, % threadWaitForMovement, -0 ; new thread
+                }
+
+                break
+        }
+
+        IfWinNotActive, Minecraft
+            break
     }
 
-    MouseClick,, winX+2, winY+winHeight*.225,,0                     ; Create
-    MouseMove, winX+winWidth/2, winY+winHeight/2
-
-    waitUntil(Func("findPixel"),,,0x9234EB,winX2-20,winY2-20,40,40)
-    xCoord := getValue("Float", offsetsCoords*).value
-    Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1])
-    
-    if (autoReset && (xCoord < minCoords Or xCoord > maxCoords))
-        return inGameReset()
-
-    if (Timer1 && waitUntil(Func("changedValue"),300000,, xCoord, "Float", offsetsCoords*))   ;hijaks thread bad
-        Timer1.start()
+    if !Timer1
+        isResetting := 0
 }
 
-findImage(image,x,y,dx,dy)
+waitForMovement()
 {
-    ImageSearch, outX, outY, x, y, x+dx, y+dy, assets/%image%.png
-    return {status: !ErrorLevel, X: outX, Y: outY}
-}
-
-findPixel(colour,x,y,dx,dy)
-{
-    PixelSearch, outX, outY, x, y, x+dx, y+dy, colour, 3, RGB Fast
-    return {status: !ErrorLevel, X: outX, Y: outY}
+    While(isResetting == 2)
+    {
+        newCoord := getValue("Float", offsetsCoords*)
+        hasInputted := (GetKeyState("W") || GetKeyState("A") || GetKeyState("S") || GetKeyState("D") || GetKeyState("Space"))
+        if (xCoord != newCoord || hasInputted)
+        {
+            Timer1.start()
+            return isResetting := 0
+        }
+    }
 }
 
 getValue(dataType, baseOffset, offsets*)
@@ -128,38 +146,14 @@ getValue(dataType, baseOffset, offsets*)
 	{
     	value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
     	if (value < 100000 && 0 < value)
-        	return {status: 1, value: value}
+        	return value
 
         if (A_Index > 3000)
             break
 	}
-    msgbox % "Value: " . value . ", PID: " . MCproc.PID . ", " . MCproc.currentProgram . ", bAddress: " . MCproc.baseAddress . " + " . baseOffset
-	Exit
+    Log("Value: " . value . ", PID: " . MCproc.PID . ", " . MCproc.currentProgram . ", bAddress: " . MCproc.baseAddress . " + " . baseOffset)
 }
 
-changedValue(Tvalue, dataType, baseOffset, offsets*)
-{
-    value := MCproc.read(MCproc.baseAddress + baseOffset, dataType, offsets*)
-    if ((value != Tvalue || (GetKeyState("W") || GetKeyState("S") || GetKeyState("Space"))) && (value < 100000 && 0 < value))
-        return {status: 1, value: value}
-}
-
-waitUntil(Function, waitTime := 30000, checkDelay := 1, Args*)    ; byRef Args* does not work sad
-{
-    waitTime += A_TickCount
-    Loop, {
-        if A_TickCount >= %waitTime%
-        {
-            MsgBox, Timed Out!
-            runAttempts := updateAttempts(-1)
-            Exit
-        }
-        returnValue := %Function%(Args*)    ; wow this is bad
-        if returnValue.status
-            return returnValue
-        Sleep, %checkDelay%
-    }
-}
 
 updateAttempts(amount := 1)
 {

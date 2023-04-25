@@ -4,7 +4,7 @@
     "easing": "linear",
     "from": ["1px", "1px"],
     "to": [ 0, 0 ],
-    "duration": 3
+    "duration": 2
   },
   
   "purple_image":{
@@ -29,6 +29,4 @@
       }
     ]
   }
-
-  //"transparent_background": { "alpha":0.6 }
 }
