@@ -2,15 +2,13 @@ Class Timer
 {
     __New()
     {
-        this.refreshRate := 0
-        this.Font := "MOJANGLES"
         this.timeDisplayed := "0:00.000"
         loadTimerConfigs()
 
         global textTimer
         Gui, Timer:Show, % "x0 " . " y0" . " w" . A_ScreenWidth . " h" . A_ScreenHeight
-        Gui, Timer:Font, % "s" . timerSize . " c" . timerColour . " q4", % this.Font
-        Gui, Timer:Add, Text, x0 y0 w%A_ScreenWidth% vtextTimer, 0:00.000
+        Gui, Timer:Font, % "s" . timerSize . " c" . timerColour . " q4", % timerFont
+        Gui, Timer:Add, Text, x0 y0 w%A_ScreenWidth% vtextTimer, % this.timeDisplayed
         Gui, Timer:+AlwaysOnTop -Border -Caption +LastFound +ToolWindow
         Gui, Timer:Color, 000001
         WinSet, TransColor, 000001
@@ -41,7 +39,7 @@ Class Timer
 
         this.tickFunction := this.tick.Bind(this)
         tickFunction := this.tickFunction
-        SetTimer, % tickFunction, % this.refreshRate
+        SetTimer, % tickFunction, % timerRefreshRate
     }
 
     stop()
@@ -123,7 +121,7 @@ Class Timer
 
     getTextSize(){
         ; GuiControlGet textSize, Timer:Pos, textTimer
-        Gui, textSizeGUI:Font, % "s"timerSize, % this.Font
+        Gui, textSizeGUI:Font, % "s"timerSize, % timerFont
         Gui, textSizeGUI:Add, Text,, % this.timeDisplayed
         GuiControlGet textSize, textSizeGUI:Pos, Static1
         Gui, textSizeGUI:Destroy

@@ -89,12 +89,14 @@ adjustMinecraftSettings()
 
 loadTimerConfigs()
 {
-    IniRead, timerOffset, %iniFile%, Timer, Offset
+    IniRead, timerOffset, %iniFile%, Timer, offset
         timerOffset := StrSplit(timerOffset, ",")
-    IniRead, timerAnchor, %iniFile%, Timer, Anchor
-    IniRead, timerSize, %iniFile%, Timer, Size
-    IniRead, timerColour, %iniFile%, Timer, Colour
+    IniRead, timerAnchor, %iniFile%, Timer, anchor
+    IniRead, timerFont, %iniFile%, Timer, font
+    IniRead, timerSize, %iniFile%, Timer, size
+    IniRead, timerColour, %iniFile%, Timer, colour
     IniRead, timerDecimalPlaces, %iniFile%, Timer, decimalPlaces
+    IniRead, timerRefreshRate, %iniFile%, Timer, refreshRate
 }
 
 getMCVersion()

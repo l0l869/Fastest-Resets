@@ -132,7 +132,7 @@ AddSeed:
 return
 
 TimerSettings:
-    Gui, timerSettings:Show, w250 h210, Timer
+    Gui, timerSettings:Show, w250 h235, Timer
     Gui, timerSettings:Font, s10 Arial
 
     Gui, timerSettings:add, GroupBox, y5 w70 h75, Offset
@@ -144,47 +144,56 @@ TimerSettings:
     Gui, timerSettings:add, GroupBox, y5 x90 w150 h75, Anchor
     Gui, timerSettings:add, DDL     , y35 x110 w110 h75 vdropdownlistAnchor, TopLeft|TopRight|BottomLeft|BottomRight
 
-    Gui, timerSettings:add, GroupBox, y80 x12 w150 h75, Font
+    Gui, timerSettings:add, GroupBox, y80 x12 w150 h100, Font
     Gui, timerSettings:add, Text    , y100 x25, Size
     Gui, timerSettings:add, Edit    , y120 x25 w30 veditboxSize +Number -Multi Center
     Gui, timerSettings:add, Text    , y100 x75, Colour (Hex)
-    Gui, timerSettings:add, Edit    , y120 x75 w70 veditboxColour -Multi Center
+    Gui, timerSettings:add, Edit    , y120 x75 w70 veditboxColour -Multi Center Limit6
+    Gui, timerSettings:add, Edit    , y150 x25 w120 veditboxFont -Multi Center
 
-    Gui, timerSettings:add, GroupBox, y80 x170 w70 h75, Precision
-    Gui, timerSettings:add, DDL     , y110 x188 w35 h75 vdropdownlistDecimalPlaces, 1|2|3
+    Gui, timerSettings:add, GroupBox, y80 x170 w70 h100, Precision
+    Gui, timerSettings:add, DDL     , y125 x188 w35 h75 vdropdownlistDecimalPlaces, 1|2|3
 
-    Gui, timerSettings:add, Button  , y160 x12 w230 h40 gTimerSave, Save
+    Gui, timerSettings:add, Button  , y185 x12 w230 h40 gTimerSave, Save
 
-    IniRead, iniOffset, %iniFile%, Timer, Offset
+    IniRead, iniOffset, %iniFile%, Timer, offset
         Offsets := StrSplit(iniOffset, ",")
         GuiControl, timerSettings:, editboxX, % Offsets[1]
         GuiControl, timerSettings:, editboxY, % Offsets[2]
 
-    IniRead, iniAnchor, %iniFile%, Timer, Anchor
+    IniRead, iniAnchor, %iniFile%, Timer, anchor
         GuiControl, timerSettings:, dropdownlistAnchor, % "|" . iniAnchor . "||TopLeft|TopRight|BottomLeft|BottomRight"
 
-    IniRead, iniSize, %iniFile%, Timer, Size
+    IniRead, iniFont, %iniFile%, Timer, font
+        GuiControl, timerSettings:, editboxFont, %iniFont%
+
+    IniRead, iniSize, %iniFile%, Timer, size
         GuiControl, timerSettings:, editboxSize, %iniSize%
 
-    IniRead, iniColour, %iniFile%, Timer, Colour
+    IniRead, iniColour, %iniFile%, Timer, colour
         GuiControl, timerSettings:, editboxColour, %iniColour%
 
     IniRead, inidecimalPlaces, %iniFile%, Timer, decimalPlaces
         GuiControl, timerSettings:, dropdownlistDecimalPlaces, % "|" . inidecimalPlaces . "||1|2|3"
-
 return
 
 TimerSave:
     Gui, timerSettings:Submit
     Gui, timerSettings:Destroy
 
-    IniWrite, % editboxX . "," . editboxY, %iniFile%, Timer, Offset
-    IniWrite, % dropdownlistAnchor, %iniFile%, Timer, Anchor
-    IniWrite, % editboxSize, %iniFile%, Timer, Size
-    IniWrite, % editboxColour, %iniFile%, Timer, Colour
+    IniWrite, % editboxX . "," . editboxY, %iniFile%, Timer, offset
+    IniWrite, % dropdownlistAnchor, %iniFile%, Timer, anchor
+    IniWrite, % editboxFont, %iniFile%, Timer, font
+    IniWrite, % editboxSize, %iniFile%, Timer, size
+    IniWrite, % editboxColour, %iniFile%, Timer, colour
     IniWrite, % dropdownlistDecimalPlaces, %iniFile%, Timer, decimalPlaces
 
-    loadTimerConfigs()
+    if Timer1
+    {
+        Timer1.reset()
+        Timer1 := ""
+        Timer1 := new Timer()
+    }
 return
 
 ; edits, checkboxes
