@@ -115,6 +115,9 @@ inGameReset()
                     setTimer, % threadWaitForMovement, -0 ; new thread
                 }
 
+                if (autoReset && FileExist("assets/alert.wav"))
+                    SoundPlay, assets/alert.wav
+
                 break
         }
 
