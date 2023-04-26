@@ -50,9 +50,41 @@
         GuiControl, MainWin:, textWorlds, #Worlds: %worldCount%
 
     updateAttempts(0)
+
     if !latestVersions
         checkUpdates()
+
     configureCompatibility()
+
+    adjustMinecraftSettings()
+}
+
+adjustMinecraftSettings()
+{
+    hasUpdated := 0
+    txtOptions := MCdir . "\minecraftpe\options.txt"
+
+    if(!FileExist(txtOptions))
+        return -1
+
+    Loop, read, %txtOptions%
+    {
+        if InStr(A_LoopReadLine, "screen_animations:")
+            hasUpdated |= SubStr(A_LoopReadLine, 19, 1) == "0" ? 0 : writeAtLine(txtOptions, A_Index, "screen_animations:0")
+
+        if InStr(A_LoopReadLine, "gfx_safe_zone_x:")
+            hasUpdated |= SubStr(A_LoopReadLine, 17, 1) == "1" ? 0 : writeAtLine(txtOptions, A_Index, "gfx_safe_zone_x:1")
+
+        if InStr(A_LoopReadLine, "gfx_safe_zone_y:")
+            hasUpdated |= SubStr(A_LoopReadLine, 17, 1) == "1" ? 0 : writeAtLine(txtOptions, A_Index, "gfx_safe_zone_y:1")
+    }
+    
+    if hasUpdated
+    {
+        MsgBox,4, Warning, Restart to apply appropriate Minecraft settings?
+        IfMsgBox, Yes
+            Gosub, restartMC
+    }
 }
 
 loadTimerConfigs()
@@ -75,10 +107,6 @@ getMCVersion()
         GuiControl, MainWin:, textMCVersion, MCVersion: %MCversion%
 
     return MCversion
-}
-
-Log(entry){
-    FileAppend, %entry%`n, configs\logs.txt
 }
 
 configureCompatibility()   ;compatibility checks
@@ -171,4 +199,29 @@ downloadLatest(latestVersions)
     MsgBox, Update Complete!
     Run, %scriptMainDir%\%newVersionFolderName%\Fastest-Resets.ahk
     ExitApp, 1
+}
+
+writeAtLine(txtPath, atLine, string)
+{
+    txtFile := FileOpen(txtPath, "rw")
+
+    dataFile := txtFile.Read()
+    dataFile := StrSplit(dataFile, "`n")
+    if (dataFile[atLine])
+    {
+        dataFile[atLine] := string
+        for k, v in dataFile
+            if (v != "`n")
+                dataReturn .= v . "`n"
+        
+        txtFile.Seek(0)
+        txtFile.Write(dataReturn)
+    }
+
+    txtFile.Close()
+    return 1
+}
+
+Log(entry){
+    FileAppend, %entry%`n, configs\logs.txt
 }
