@@ -24,8 +24,8 @@ Gui, add, GroupBox, y5 w150 h50, Hotkeys
 Gui, add, Button  , y25 x25 w120 h20 gEditHotkeys, Edit Hotkeys
 
 Gui, add, GroupBox, y60 x10 w150 h120, Set Seed
-Gui, add, Edit    , y80 x25 w120 veditboxSeed gAddSeed +Number -Multi
-Gui, add, Button  , y105 x25 w120 h20 vbuttonAddSeed, Add Seed
+Gui, add, Edit    , y80 x25 w120 veditboxSeed +Number -Multi
+Gui, add, Button  , y105 x25 w120 h20 vbuttonAddSeed gAddSeed, Add Seed
 Gui, add, DDL     , y130 x25 w120 vdropdownlistSeed gdropdownlistSeed
 Gui, add, Checkbox, y160 x25 vcheckboxSetSeed gcheckboxSetSeed, Set Seed
 
@@ -115,19 +115,23 @@ return
 AddSeed:
     GuiControlGet inputtedSeed,, editboxSeed
     FileRead, seedList, configs\seeds.txt
+    seedList := StrSplit(seedList, "|")
 
     if !inputtedSeed
-    {
         MsgBox, Invalid input!
-    }
 
-    if InStr(seedList, inputtedSeed)    ; this is bad, for instance: "12" is in "551255"
-        MsgBox, %inputtedSeed% is already in seed list!
-    Else
+    seedInList := false
+    For k, v in seedList
+        if (inputtedSeed==v)
+            seedInList := true
+        
+    if !seedInList
     {
         FileAppend, |%inputtedSeed%, configs\seeds.txt
-        GuiControl,, dropdownlistSeed, %inputtedSeed% ; weird
+        GuiControl,, dropdownlistSeed, %inputtedSeed%
         GuiControl,, editboxSeed
+    } else {
+        MsgBox, %inputtedSeed% is already in seed list!
     }
 return
 
