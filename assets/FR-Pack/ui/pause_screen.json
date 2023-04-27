@@ -60,6 +60,11 @@
             }
         ]
     },
+    "menu_button_control@pause.pause_screen_border": {
+        "size": [ "50% + 10px", "100%c + 2px" ],
+        "min_size": [ 132, "100%c + 2px" ],
+        "max_size": [ 150, "100%c + 2px" ]
+    },
     "menu_background/button_panel": {
         "controls": [
             { "return_to_game_button@pause.return_to_game_button": {} },
@@ -68,17 +73,8 @@
         ]
     },
     "pause_screen_menu": {
-        "modifications": [
-            {
-                "array_name": "controls",
-                "operation": "remove",
-                "control_name": "pause_logo_panel"
-            },
-            {
-                "array_name": "controls",
-                "operation": "remove",
-                "control_name": "top_indent"
-            }
+        "controls":[
+            { "the_rest_panel@pause.the_rest_panel": {} }
         ]
     },
     "skin_panel": {
@@ -90,10 +86,19 @@
         ]
     },
     "the_rest_panel": {
+        "type": "panel",
         "size": [
             "100% + 120px",
             "fill"
+        ],
+        "controls": [
+            { "pause_menu@pause.menu_the_rest_panel": {} },
+            { "skin_panel@pause.skin_panel": { "layer": 1 } }
         ]
+    },
+    "menu_the_rest_panel": {
+        "type": "input_panel",
+        "size": [ "fill", "fill" ]
     },
     "info_panel@pause.pause_screen_border": {
         "size": [

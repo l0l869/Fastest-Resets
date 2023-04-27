@@ -1,5 +1,38 @@
 {
     "settings_content":{
+        "controls":[
+            {
+                "stack_panel": {
+                "type": "stack_panel",
+                "size": [ "100%", "100%" ],
+                "controls": [
+                    {
+                    "content_panel": {
+                        "type": "panel",
+                        "size": [ "100%", "fill" ],
+        
+                        "controls": [
+                        {
+                            "common_panel@common.fullscreen_header": {
+                            "$dialog_background": "dialog_background_hollow_3"
+                            }
+                        },
+                        {
+                            "container": {
+                            "type": "panel",
+                            "size": [ "100%", "100% - 4px" ],
+                            "controls": [
+                                { "$dialog_content@$dialog_content": {} }
+                            ]
+                            }
+                        }
+                        ]
+                    }
+                    }
+                ]
+                }
+            }
+        ],
         "modifications":[
             {
                 "array_name":"controls",
@@ -89,17 +122,6 @@
         ]
     },
 
-
-
-    // "settings_content": { // for newer versions that add solid background
-    //     "modifications": [
-    //         {
-    //             "array_name": "controls",
-    //             "control_name": "background",
-    //             "operation": "remove"
-    //         }
-    //     ]
-    // },
 
     "toggle_button_control_2": {
         "type": "panel",

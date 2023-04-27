@@ -1,6 +1,6 @@
 ;===Script===
 global SCRIPT_VERSION := 20230427
-global PACK_VERSION := 117
+global PACK_VERSION := 200
 global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
 global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
