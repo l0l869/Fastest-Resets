@@ -35,7 +35,8 @@
         Hotkey, %iniKey%, RestartMC
 
     IniRead, iniKey, %iniFile%, Hotkeys, StopReset
-        Hotkey, %iniKey%, StopReset
+        if(iniKey != "ERROR")
+            Hotkey, %iniKey%, StopReset
 
     IniRead, iniKeyDelay, %iniFile%, Settings, keyDelay
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
