@@ -3,34 +3,33 @@
 Exit
 
 ResetInGame:
-    IfWinNotExist, Minecraft
+    if !WinActive("Minecraft")
     {
-        MsgBox,4,, Minecraft is not open, do you want to launch?
-        IfMsgBox, Yes
-            Gosub, RestartMC
+        ; awkward substitute fix for #ifwinactive 
+        IniRead, iniKey, %iniFile%, Hotkeys, Reset
+        Hotkey, %iniKey%, ResetInGame, Off
+        Send, %iniKey%
+        Hotkey, %iniKey%, ResetInGame, On
         return
     }
 
-    IfWinActive, Minecraft
-    {   
-        isResetting := 1
+    isResetting := 1
 
-        MCproc := "" ; close handle of old mc
-        MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
+    MCproc := "" ; close handle of old mc
+    MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
 
-        if Timer1
-            Timer1.reset()
+    if Timer1
+        Timer1.reset()
 
-        if !timerActivated
-            Timer1 := ""
+    if !timerActivated
+        Timer1 := ""
 
-        if (!Timer1 && timerActivated)
-            global Timer1 := new Timer()
+    if (!Timer1 && timerActivated)
+        global Timer1 := new Timer()
 
-        getWinDimensions("Minecraft")
+    getWinDimensions("Minecraft")
 
-        inGameReset()
-    }
+    inGameReset()
 return
 
 RestartMC:
@@ -121,7 +120,7 @@ inGameReset()
                 break
         }
 
-        IfWinNotActive, Minecraft
+        if !WinActive("Minecraft")
             break
     }
 

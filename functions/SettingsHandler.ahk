@@ -37,6 +37,12 @@
     IniRead, iniKey, %iniFile%, Hotkeys, StopReset
         if(iniKey != "ERROR")
             Hotkey, %iniKey%, StopReset
+        Else {
+            IniWrite, ^Tab, %iniFile%, Hotkeys, StopReset
+            IniWrite, Mojangles, %iniFile%, Timer, font
+            IniWrite, 0, %iniFile%, Timer, refreshRate
+            Hotkey, ^Tab, StopReset
+        }
 
     IniRead, iniKeyDelay, %iniFile%, Settings, keyDelay
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
