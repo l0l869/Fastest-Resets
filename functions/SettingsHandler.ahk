@@ -44,6 +44,14 @@
             Hotkey, ^Tab, StopReset
         }
 
+    IniRead, iniKey, %iniFile%, Hotkeys, StartTimer
+        if(iniKey && iniKey != "ERROR")
+            Hotkey, %iniKey%, StartTimer
+
+    IniRead, iniKey, %iniFile%, Hotkeys, StopTimer
+        if(iniKey && iniKey != "ERROR")
+            Hotkey, %iniKey%, StopTimer
+
     IniRead, iniKeyDelay, %iniFile%, Settings, keyDelay
         GuiControl,, editboxKeyDelay, %iniKeyDelay%
         keyDelay := iniKeyDelay
@@ -104,6 +112,7 @@ loadTimerConfigs()
     IniRead, timerColour, %iniFile%, Timer, colour
     IniRead, timerDecimalPlaces, %iniFile%, Timer, decimalPlaces
     IniRead, timerRefreshRate, %iniFile%, Timer, refreshRate
+    IniRead, timerAutoSplit, %iniFile%, Timer, autoSplit
 }
 
 getMCVersion()

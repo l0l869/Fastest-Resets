@@ -21,12 +21,6 @@ ResetInGame:
     if Timer1
         Timer1.reset()
 
-    if !timerActivated
-        Timer1 := ""
-
-    if (!Timer1 && timerActivated)
-        global Timer1 := new Timer()
-
     getWinDimensions("Minecraft")
 
     inGameReset()
@@ -40,6 +34,16 @@ Return
 
 StopReset:
     isResetting := 0
+return
+
+StartTimer:
+    if Timer1
+        Timer1.start()
+Return
+
+StopTimer:
+    if Timer1
+        Timer1.stop()
 return
 
 inGameReset()
@@ -83,7 +87,7 @@ inGameReset()
                 if setSeed
                 {
                     MouseClick,, winX+3, winY+winHeight*.175,,0
-                    Sleep, 1
+                    Sleep, %keyDelay%
                     IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
                     Send, %selectedSeed%
                     Sleep, %keyDelay%

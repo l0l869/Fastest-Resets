@@ -1,5 +1,5 @@
 ;===Script===
-global SCRIPT_VERSION := 20230427
+global SCRIPT_VERSION := 20230512
 global PACK_VERSION := 200
 global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
@@ -28,6 +28,7 @@ global timerSize
 global timerColour
 global timerDecimalPlaces
 global timerRefreshRate
+global timerAutoSplit
 
 ;===Config===
 global setSeed
@@ -64,9 +65,13 @@ global checkboxSetSeed
 ;global hotkeyboxNewRestartMc
 ;global hotkeyboxNewResetKey
 ;global hotkeyboxStopResetKey
-;global textResetKey
-;global textRestartMcKey
-;global textStopResetKey
+;global hotkeyboxStartTimer
+;global hotkeyboxStopTimer
+;global textReset
+;global textRestartMC
+;global textStopReset
+;global textStartTimer
+;global textStopTimer
 ;----
         ;Autoreset
 global editboxMaxCoords

@@ -74,19 +74,23 @@ InstallPack:
     }
 return
 
-OpenMCDir: 
+OpenMCDir:
     run, %MCdir%
 return
 
 EditHotkeys:
-    Gui, hotkeysWin:Show, w170 h195
+    Gui, hotkeysWin:Show, w170 h285
     Gui, hotkeysWin:add, Hotkey, x10 y20 w150 vhotkeyboxNewResetKey
     Gui, hotkeysWin:add, Hotkey, x10 y65 w150 vhotkeyboxNewRestartMc
     Gui, hotkeysWin:add, Hotkey, x10 y110 w150 vhotkeyboxStopResetKey
-    Gui, hotkeysWin:add, Text  , x10 y5,Reset Key
-    Gui, hotkeysWin:add, Text  , x10 y50,Restart MC Key
-    Gui, hotkeysWin:add, Text  , x10 y95,Stop Reset Key
-    Gui, hotkeysWin:add, Button, x10 y150 w150 h30 gSaveHotkeys,Save
+    Gui, hotkeysWin:add, Hotkey, x10 y155 w150 vhotkeyboxStartTimer
+    Gui, hotkeysWin:add, Hotkey, x10 y200 w150 vhotkeyboxStopTimer
+    Gui, hotkeysWin:add, Text  , x10 y5,Reset
+    Gui, hotkeysWin:add, Text  , x10 y50,Restart MC
+    Gui, hotkeysWin:add, Text  , x10 y95,Stop Reset
+    Gui, hotkeysWin:add, Text  , x10 y140,Start Timer
+    Gui, hotkeysWin:add, Text  , x10 y185,Stop Timer
+    Gui, hotkeysWin:add, Button, x10 y240 w150 h30 gSaveHotkeys,Save
 
     IniRead, iniKey, %iniFile%, Hotkeys, Reset
         GuiControl, hotkeysWin:, hotkeyboxNewResetKey, %iniKey%
@@ -96,6 +100,12 @@ EditHotkeys:
 
     IniRead, iniKey, %iniFile%, Hotkeys, StopReset
         GuiControl, hotkeysWin:, hotkeyboxStopResetKey, %iniKey%
+
+    IniRead, iniKey, %iniFile%, Hotkeys, StartTimer
+        GuiControl, hotkeysWin:, hotkeyboxStartTimer, %iniKey%
+
+    IniRead, iniKey, %iniFile%, Hotkeys, StopTimer
+        GuiControl, hotkeysWin:, hotkeyboxStopTimer, %iniKey%
 return
 
 SaveHotkeys:
@@ -105,6 +115,8 @@ SaveHotkeys:
     IniWrite, %hotkeyboxNewResetKey%, %iniFile%, Hotkeys, Reset
     IniWrite, %hotkeyboxNewRestartMc%, %iniFile%, Hotkeys, RestartMinecraft
     IniWrite, %hotkeyboxStopResetKey%, %iniFile%, Hotkeys, StopReset
+    IniWrite, %hotkeyboxStartTimer%, %iniFile%, Hotkeys, StartTimer
+    IniWrite, %hotkeyboxStopTimer%, %iniFile%, Hotkeys, StopTimer
 
     if A_IsCompiled
         Run, Fastest-Resets.exe
@@ -155,8 +167,11 @@ TimerSettings:
     Gui, timerSettings:add, Edit    , y120 x75 w70 veditboxColour -Multi Center Limit6
     Gui, timerSettings:add, Edit    , y150 x25 w120 veditboxFont -Multi Center
 
-    Gui, timerSettings:add, GroupBox, y80 x170 w70 h100, Precision
-    Gui, timerSettings:add, DDL     , y125 x188 w35 h75 vdropdownlistDecimalPlaces, 1|2|3
+    Gui, timerSettings:add, GroupBox, y80 x170 w70 h50, Precision
+    Gui, timerSettings:add, DDL     , y100 x188 w35 h75 vdropdownlistDecimalPlaces, 1|2|3
+
+    Gui, timerSettings:add, GroupBox, y130 x170 w70 h50, AutoSplit
+    Gui, timerSettings:add, Checkbox, y150 x198 vcheckboxAutoSplit
 
     Gui, timerSettings:add, Button  , y185 x12 w230 h40 gTimerSave, Save
 
@@ -177,8 +192,11 @@ TimerSettings:
     IniRead, iniColour, %iniFile%, Timer, colour
         GuiControl, timerSettings:, editboxColour, %iniColour%
 
-    IniRead, inidecimalPlaces, %iniFile%, Timer, decimalPlaces
-        GuiControl, timerSettings:, dropdownlistDecimalPlaces, % "|" . inidecimalPlaces . "||1|2|3"
+    IniRead, iniDecimalPlaces, %iniFile%, Timer, decimalPlaces
+        GuiControl, timerSettings:, dropdownlistDecimalPlaces, % "|" . iniDecimalPlaces . "||1|2|3"
+
+    IniRead, iniAutoSplit, %iniFile%, Timer, autoSplit
+        GuiControl, timerSettings:, checkboxAutoSplit, % iniAutoSplit
 return
 
 TimerSave:
@@ -191,11 +209,13 @@ TimerSave:
     IniWrite, % editboxSize, %iniFile%, Timer, size
     IniWrite, % editboxColour, %iniFile%, Timer, colour
     IniWrite, % dropdownlistDecimalPlaces, %iniFile%, Timer, decimalPlaces
+    IniWrite, % checkboxAutoSplit, %iniFile%, Timer, autoSplit
 
     if Timer1
     {
         Timer1.reset()
         Timer1 := ""
+        Gui, Timer:Destroy ;idk why it doesnt dereference properly
         Timer1 := new Timer()
     }
 return

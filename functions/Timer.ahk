@@ -37,6 +37,8 @@ Class Timer
     {
         this.startTick := A_TickCount
 
+        if this.tickFunction
+            return
         this.tickFunction := this.tick.Bind(this)
         tickFunction := this.tickFunction
         SetTimer, % tickFunction, % timerRefreshRate
@@ -47,16 +49,17 @@ Class Timer
         if !this.tickFunction
             return 1
         tickFunction := this.tickFunction
-        SetTimer, % tickFunction, -0
+        SetTimer, % tickFunction, Off
 
         this.tickFunction:=""
     }
 
     tick()
     {
+        if timerAutoSplit
+            this.checkAutoSplit()
         this.elapsedTick := A_TickCount-this.startTick
         GuiControl, Timer:, textTimer, % this.FormatTime(this.elapsedTick)
-        this.checkAutoSplit()
     }
 
     FormatTime(ms)
