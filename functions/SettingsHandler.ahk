@@ -117,8 +117,9 @@ loadTimerConfigs()
 
 getMCVersion()
 {
-    IfWinNotExist, Minecraft
-        return -1
+    Process, Exist, Minecraft.Windows.exe
+        if !ErrorLevel
+            return -1
     
     MCproc := new _ClassMemory("ahk_exe Minecraft.Windows.exe", "PROCESS_VM_READ")
     FileGetVersion, MCversion, % MCproc.GetModuleFileNameEx()
@@ -127,9 +128,9 @@ getMCVersion()
     return MCversion
 }
 
-configureCompatibility()   ;compatibility checks
+configureCompatibility()
 {
-    WinWait, Minecraft
+    Process, Wait, Minecraft.Windows.exe
 
     ;GuiControl, Enable, checkboxAutoReset if i want to call this func at every reset
     switch getMCVersion()
@@ -142,9 +143,9 @@ configureCompatibility()   ;compatibility checks
         case "1.14.60.5": offsetsCoords := [0x0307D3A0, 0x30, 0xF0, 0x110]
         case "1.2.13.54": offsetsCoords := [0x01FA1888, 0x0, 0x10, 0x10, 0x20, 0x0, 0x2C]
         Default: 
-            GuiControl, MainWin:, textMCVersion, MCVersion: %MCversion%`nAutoReset not supported.
-            GuiControl, Disable, checkboxAutoReset
-            GuiControl, MainWin:, checkboxAutoReset, 0
+            GuiControl, MainWin:,        textMCVersion, MCVersion: %MCversion%`nAutoReset not supported.
+            GuiControl, MainWin:Disable, checkboxAutoReset
+            GuiControl, MainWin:,        checkboxAutoReset, 0
             Gosub, checkboxAutoReset
     }
     
@@ -223,8 +224,7 @@ writeAtLine(txtPath, atLine, string)
 {
     txtFile := FileOpen(txtPath, "rw")
 
-    dataFile := txtFile.Read()
-    dataFile := StrSplit(dataFile, "`n")
+    dataFile := StrSplit(txtFile.Read(), "`n")
     if (dataFile[atLine])
     {
         dataFile[atLine] := string

@@ -135,11 +135,25 @@ Class Timer
 
 getWinDimensions(Window)
 {
+    WinGet, style, Style, %Window%
+    isFullscreen := !(style & 0x20800000)
+    if isFullscreen
+    {
+        winX := 0
+        winY := 0
+        winWidth := A_ScreenWidth
+        winHeight := A_ScreenHeight
+        winX2 := winX+winWidth
+        winY2 := winY+winHeight
+        return
+    }
+
     WinGetPos, winX, winY, winWidth, winHeight, %Window%
-    winX += 8
-    winY += 30
-    winWidth -= 16
-    winHeight -= 38
+    winScaling := A_ScreenDPI/96
+    winX += 8*winScaling
+    winY += 30*winScaling
+    winWidth -= 16*winScaling
+    winHeight -= 38*winScaling
     winX2 := winX+winWidth
     winY2 := winY+winHeight
 }
