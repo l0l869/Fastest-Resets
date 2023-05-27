@@ -70,6 +70,8 @@
     ;     checkUpdates()
 
     configureCompatibility()
+
+    loadButtons()
 }
 
 adjustMinecraftSettings()
@@ -230,7 +232,99 @@ Log(entry){
     FileAppend, %entry%`n, configs\logs.txt
 }
 
+loadButtons()
+{
+    Buttons := []
+    For k, btn in BUTTON_NAMES
+    {
+        IniRead, btnvar, %iniFile%, Buttons, %btn%
+        Buttons.push(StrSplit(btnvar,","))
+    }
+}
+
+;
+;   idk what this is im bored lol
+;
+
 SetupButtons()
 {
-    WinActivate, Minecraft
+    if currentButton
+        return
+
+    Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
+    currentButton := 1
+
+    global textTest, textTest1, textTest2
+    Gui, Setup:Show, % "x0 " . " y0" . " w" . A_ScreenWidth . " h" . A_ScreenHeight
+    Gui, Setup:Font, % "s" 25 " c" "FFFFFF" " q4", Mojangles
+    Gui, Setup:Add, Text, x0 y0 w400 h200 vtextTest
+    Gui, Setup:Add, Text, x0 y0 w200 h100 vtextTest1
+    Gui, Setup:Add, Text, x0 y0 w1000 h1000 vtextTest2
+
+    string := ""
+    For k, btn in BUTTON_NAMES
+    {
+        amount := 15-StrLen(btn)
+        btnname := ""
+        Loop, %amount%
+            btnname .= " "
+        string .= btn "" btnname ": X:" Buttons[k][1] " Y:" Buttons[k][2] " Colour: " Buttons[k][3] "`n"
+    }
+    Gui, Setup:Font, % "s" 15 " c" "FFFFFF" " q4", Consolas
+    GuiControl, Setup:Font, textTest2
+    GuiControl, Setup:, textTest2, % string
+
+    Gui, Setup:+AlwaysOnTop -Border -Caption +LastFound +ToolWindow
+    Gui, Setup:Color, 000001
+    WinSet, TransColor, 000001
+    Gui, Setup:Show, x0 y0
+
+    SetTimer, updateSetupWindow, 0
+
+    updateSetupWindow:
+        MouseGetPos, mouseX, mouseY
+        getWinDimensions("Minecraft")
+        PixelGetColor, atMouseColour, mouseX, mouseY, RGB
+
+        Switch atMouseColour ;hover colour to unhover colour
+        {
+            case 0x218306: atMouseColour := 0xC6C6C6
+            case 0x43A01C: atMouseColour := 0xC6C6C6
+            case 0x177400: atMouseColour := 0x979797
+            case 0x025F00: atMouseColour := 0x404040
+            case 0x037300: atMouseColour := 0x7F7F7F
+            case 0xFFFFFF: atMouseColour := 0x4C4C4C
+            case 0x4E8836: atMouseColour := 0x808080
+        }
+
+        GuiControl, Setup:Move, textTest , % "x" mouseX "y" mouseY
+        GuiControl, Setup:Move, textTest1, % "x" mouseX+135 "y" mouseY+75
+        Gui, Setup:Font, % "s" 25 " q4" " c" atMouseColour, Mojangles
+        GuiControl, Setup:Font, textTest1
+        GuiControl, Setup:, textTest, % "X:" Floor(mouseX-winX) " Y:" Floor(mouseY-winY) "`nButton: " BUTTON_NAMES[currentButton] "`nColour: "
+        GuiControl, Setup:, textTest1, % atMouseColour
+    return
+
 }
+
+setButton()
+{
+    IniWrite, % mouseX "," mouseY "," atMouseColour, %iniFile%, Buttons, % BUTTON_NAMES[currentButton]
+    currentButton += 1
+    if(currentButton > BUTTON_NAMES.length())
+        ;currentButton := 1
+        finishSetup()
+}
+
+finishSetup()
+{
+    Gui, Setup:Destroy
+    currentButton := ""
+    loadButtons()
+}
+
+s := Func("setButton") ;will do for now
+Hotkey, ^U, % s
+
+s := Func("finishSetup")
+Hotkey, ^Y, % s

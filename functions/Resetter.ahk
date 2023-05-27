@@ -5,7 +5,7 @@ Exit
 ResetInGame:
     if !WinActive("Minecraft")
     {
-        ; awkward substitute fix for #ifwinactive 
+        ; awkward substitute fix for #ifwinactive
         IniRead, iniKey, %iniFile%, Hotkeys, Reset
         Hotkey, %iniKey%, ResetInGame, Off
         Send, %iniKey%
@@ -52,61 +52,80 @@ inGameReset()
     if autoRestart
         shouldRestart(runAttempts)
 
-
-    ; working concept for now
-
-    IniRead, BTN_SaveAndQuit   , %iniFile%, Buttons, SaveAndQuit
-    IniRead, BTN_CreateNew     , %iniFile%, Buttons, CreateNew
-    IniRead, BTN_CreateNewWorld, %iniFile%, Buttons, CreateNewWorld
-    IniRead, BTN_Normal        , %iniFile%, Buttons, Normal
-    IniRead, BTN_Easy          , %iniFile%, Buttons, Easy
-    IniRead, BTN_Seed          , %iniFile%, Buttons, Seed
-    IniRead, BTN_Simulation    , %iniFile%, Buttons, Simulation
-    IniRead, BTN_Create        , %iniFile%, Buttons, Create
-
-    BTN_SaveAndQuit    := StrSplit(BTN_SaveAndQuit, ",")
-    BTN_CreateNew      := StrSplit(BTN_CreateNew, ",")
-    BTN_CreateNewWorld := StrSplit(BTN_CreateNewWorld, ",")
-    BTN_Normal         := StrSplit(BTN_Normal, ",")
-    BTN_Easy           := StrSplit(BTN_Easy, ",")
-    BTN_Seed           := StrSplit(BTN_Seed, ",")
-    BTN_Simulation     := StrSplit(BTN_Simulation, ",")
-    BTN_Create         := StrSplit(BTN_Create, ",")
-
-    Buttons := [BTN_SaveAndQuit,BTN_CreateNew,BTN_CreateNewWorld,BTN_Normal,BTN_Easy,BTN_Seed,BTN_Simulation,BTN_Create]
-
+    ; working concept for now quite messy
     While (isResetting)
     {
+        mainLoopIndex := A_Index
+
         For k, BTN in Buttons
         {
             PixelGetColor, isColourBTN, BTN[1], BTN[2], RGB
+
             if (isColourBTN == BTN[3])
-            {
-                Click % BTN[1] BTN[2]
-                Sleep, %keyDelay%
-            }
+                Switch BUTTON_NAMES[k]
+                {
+                    case "Heart":
+                        if(mainLoopIndex < 10)
+                        {
+                            Send, {Esc}
+                            Sleep, 100
+                            Continue
+                        }
+
+                        xCoord := getValue("Float", offsetsCoords*)
+                        Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1] . ", bAddress: " . MCproc.baseAddress)
+
+                        if (autoReset && (xCoord < minCoords || xCoord > maxCoords))
+                            return inGameReset()
+
+                        if Timer1
+                        {
+                            isResetting := 2
+                            threadWaitForMovement := Func("waitForMovement")
+                            setTimer, % threadWaitForMovement, -0 ; new thread
+                        }
+
+                        if (autoReset && FileExist("assets/alert.wav"))
+                            SoundPlay, assets/alert.wav
+
+                        break 2
+
+                    case "SaveAndQuit", "CreateNew", "CreateNewWorld":
+                        MouseClick,, BTN[1], BTN[2],,0
+                        Sleep, %keyDelay%
+
+                    case "Normal":
+                        MouseClick,, BTN[1], BTN[2],,0
+                        Sleep, %keyDelay%
+                        MouseClick,, Buttons[6][1], Buttons[6][2],,0
+                        Sleep, %keyDelay%
+
+                        while(Buttons[7][3] != isColourBTN)
+                        {
+                            Send, {WheelDown}
+                            Sleep, 1
+                            PixelGetColor, isColourBTN, Buttons[7][1], Buttons[7][2], RGB
+                        }
+
+                        MouseClick,, Buttons[7][1], Buttons[7][2],,0
+                        Sleep, %keyDelay%
+                        MouseClick,, Buttons[8][1], Buttons[8][2],,0
+                        Sleep, %keyDelay%
+
+                        if setSeed
+                        {
+                            MouseClick,, Buttons[9][1], Buttons[9][2],,0
+                            Sleep, %keyDelay%
+                            IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
+                            Send, %selectedSeed%
+                            Sleep, %keyDelay%
+                        }
+
+                        MouseClick,, Buttons[10][1], Buttons[10][2],,0
+                        MouseMove, winX+winWidth/2, winY+winHeight/2
+                        Sleep, 500
+                }
         }
-
-        ; MouseMove, winX+winWidth/2, winY+winHeight/2
-        ; Sleep, 500
-
-        ; xCoord := getValue("Float", offsetsCoords*)
-        ; Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1] . ", bAddress: " . MCproc.baseAddress)
-        
-        ; if (autoReset && (xCoord < minCoords || xCoord > maxCoords))
-        ;     return inGameReset()
-
-        ; if Timer1
-        ; {
-        ;     isResetting := 2
-        ;     threadWaitForMovement := Func("waitForMovement")
-        ;     setTimer, % threadWaitForMovement, -0 ; new thread
-        ; }
-
-        ; if (autoReset && FileExist("assets/alert.wav"))
-        ;     SoundPlay, assets/alert.wav
-
-        ; break
 
         if !WinActive("Minecraft")
             break
@@ -144,7 +163,6 @@ getValue(dataType, baseOffset, offsets*)
     Log("Value: " . value . ", PID: " . MCproc.PID . ", " . MCproc.currentProgram . ", bAddress: " . MCproc.baseAddress . " + " . baseOffset)
 }
 
-
 updateAttempts(amount := 1)
 {
     txt := FileOpen("configs/attempts.txt", "r") ; open/reads txt
@@ -173,5 +191,5 @@ shouldRestart(resetCounter)
         updateAttempts(-1)
         Gosub, RestartMC ;lastRestart redefines 
         Exit
-     }
+    }
 }
