@@ -66,12 +66,10 @@
 
     updateAttempts(0)
 
-    if !latestVersions
-        checkUpdates()
+    ; if !latestVersions
+    ;     checkUpdates()
 
     configureCompatibility()
-
-    adjustMinecraftSettings()
 }
 
 adjustMinecraftSettings()
@@ -148,22 +146,8 @@ configureCompatibility()
             GuiControl, MainWin:,        checkboxAutoReset, 0
             Gosub, checkboxAutoReset
     }
-    
-    Loop, Read, %MCdir%\minecraftpe\global_resource_packs.json     ; packActive? PACK_VERSION
-    {
-        if packActive
-        {
-            RegExMatch(A_LoopReadLine, "[0-9]+, [0-9]+, [0-9]+", PACK_VERSION)
-            PACK_VERSION := StrSplit(StrReplace(PACK_VERSION, A_Space, ""), ",")
-            PACK_VERSION := PACK_VERSION[1]*100+PACK_VERSION[2]*10+PACK_VERSION[3]
-            break
-        }
-        if InStr(A_LoopReadLine,"8eb36656-a7fe-4342-93e4-e443db3e8d3b")
-            packActive := true
-    }
 
-    if !packActive
-        MsgBox,, Warning, Fastest Resets Pack isn't activated.
+    adjustMinecraftSettings()
 }
 
 checkUpdates()
@@ -177,6 +161,8 @@ checkUpdates()
     req.WaitForResponse()
     latestVersions := StrSplit(req.ResponseText, ",")
 
+    ; Definitely wont need this anymore
+    ;
     ; idk if i should have this
     ; if (PACK_VERSION < latestVersions[2])
     ;     MsgBox,, Update,% "New Pack Update!`n" . PACK_VERSION . " => " . latestVersions[2]
@@ -242,4 +228,9 @@ writeAtLine(txtPath, atLine, string)
 
 Log(entry){
     FileAppend, %entry%`n, configs\logs.txt
+}
+
+SetupButtons()
+{
+    WinActivate, Minecraft
 }

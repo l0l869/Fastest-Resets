@@ -52,77 +52,61 @@ inGameReset()
     if autoRestart
         shouldRestart(runAttempts)
 
+
+    ; working concept for now
+
+    IniRead, BTN_SaveAndQuit   , %iniFile%, Buttons, SaveAndQuit
+    IniRead, BTN_CreateNew     , %iniFile%, Buttons, CreateNew
+    IniRead, BTN_CreateNewWorld, %iniFile%, Buttons, CreateNewWorld
+    IniRead, BTN_Normal        , %iniFile%, Buttons, Normal
+    IniRead, BTN_Easy          , %iniFile%, Buttons, Easy
+    IniRead, BTN_Seed          , %iniFile%, Buttons, Seed
+    IniRead, BTN_Simulation    , %iniFile%, Buttons, Simulation
+    IniRead, BTN_Create        , %iniFile%, Buttons, Create
+
+    BTN_SaveAndQuit    := StrSplit(BTN_SaveAndQuit, ",")
+    BTN_CreateNew      := StrSplit(BTN_CreateNew, ",")
+    BTN_CreateNewWorld := StrSplit(BTN_CreateNewWorld, ",")
+    BTN_Normal         := StrSplit(BTN_Normal, ",")
+    BTN_Easy           := StrSplit(BTN_Easy, ",")
+    BTN_Seed           := StrSplit(BTN_Seed, ",")
+    BTN_Simulation     := StrSplit(BTN_Simulation, ",")
+    BTN_Create         := StrSplit(BTN_Create, ",")
+
+    Buttons := [BTN_SaveAndQuit,BTN_CreateNew,BTN_CreateNewWorld,BTN_Normal,BTN_Easy,BTN_Seed,BTN_Simulation,BTN_Create]
+
     While (isResetting)
     {
-        PixelGetColor, colourCode, winX2-1, winY2-1 ,RGB
-        Switch colourCode
+        For k, BTN in Buttons
         {
-            default:
-                if (A_Index == 1)
-                {
-                    Send, {Esc}
-                    Sleep, 75
-                }
-
-            case 0xF54242:
-                MouseClick,, winX+3, winY+winHeight*.025,,0
+            PixelGetColor, isColourBTN, BTN[1], BTN[2], RGB
+            if (isColourBTN == BTN[3])
+            {
+                Click % BTN[1] BTN[2]
                 Sleep, %keyDelay%
-
-            case 0xF57B42:
-                MouseClick,, winX+3, winY+winHeight*.025,,0
-                Sleep, %keyDelay%
-
-            case 0xF5D742:
-                MouseClick,, winX+3, winY+winHeight*.025,,0
-                Sleep, %keyDelay%
-
-            case 0x4E42F5:
-                MouseClick,, winX+3, winY+winHeight*.025,,0
-                Sleep, %keyDelay%
-                MouseClick,, winX+3, winY+winHeight*.075,,0
-                Sleep, %keyDelay%
-                MouseClick,, winX+3, winY+winHeight*.125,,0
-                Sleep, %keyDelay%
-
-                if setSeed
-                {
-                    MouseClick,, winX+3, winY+winHeight*.175,,0
-                    Sleep, %keyDelay%
-                    IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
-                    Send, %selectedSeed%
-                    Sleep, %keyDelay%
-                }
-
-                MouseClick,, winX+3, winY+winHeight*.225,,0
-                MouseMove, winX+winWidth/2, winY+winHeight/2
-                Sleep, 500
-
-            case 0x9234EB:
-                if(A_Index == 1)
-                {
-                    Send, {Esc}
-                    Sleep, 150
-                    Continue
-                }
-
-                xCoord := getValue("Float", offsetsCoords*)
-                Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1] . ", bAddress: " . MCproc.baseAddress)
-                
-                if (autoReset && (xCoord < minCoords || xCoord > maxCoords))
-                    return inGameReset()
-
-                if Timer1
-                {
-                    isResetting := 2
-                    threadWaitForMovement := Func("waitForMovement")
-                    setTimer, % threadWaitForMovement, -0 ; new thread
-                }
-
-                if (autoReset && FileExist("assets/alert.wav"))
-                    SoundPlay, assets/alert.wav
-
-                break
+            }
         }
+
+        ; MouseMove, winX+winWidth/2, winY+winHeight/2
+        ; Sleep, 500
+
+        ; xCoord := getValue("Float", offsetsCoords*)
+        ; Log("Run #" . runAttempts . " - X: " . xCoord . ", xMin: " . minCoords . ", xMax: " . maxCoords . ", Offset: " . offsetsCoords[1] . ", bAddress: " . MCproc.baseAddress)
+        
+        ; if (autoReset && (xCoord < minCoords || xCoord > maxCoords))
+        ;     return inGameReset()
+
+        ; if Timer1
+        ; {
+        ;     isResetting := 2
+        ;     threadWaitForMovement := Func("waitForMovement")
+        ;     setTimer, % threadWaitForMovement, -0 ; new thread
+        ; }
+
+        ; if (autoReset && FileExist("assets/alert.wav"))
+        ;     SoundPlay, assets/alert.wav
+
+        ; break
 
         if !WinActive("Minecraft")
             break

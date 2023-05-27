@@ -1,6 +1,5 @@
 ;===Script===
-global SCRIPT_VERSION := 20230512
-global PACK_VERSION := 200
+global SCRIPT_VERSION := 20230527
 global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
 global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
@@ -85,6 +84,7 @@ global checkboxAutoRestart
         ;Keydelay
 global editboxKeyDelay
 ;global textDelay
+global lastWarn := 0
 
         ;Timer
 global checkboxTimer
