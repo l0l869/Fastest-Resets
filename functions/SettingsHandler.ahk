@@ -66,12 +66,12 @@
 
     updateAttempts(0)
 
-    if !latestVersions
-        checkUpdates()
+    ; if !latestVersions
+    ;     checkUpdates()
 
     configureCompatibility()
 
-    adjustMinecraftSettings()
+    loadButtons()
 }
 
 adjustMinecraftSettings()
@@ -148,22 +148,8 @@ configureCompatibility()
             GuiControl, MainWin:,        checkboxAutoReset, 0
             Gosub, checkboxAutoReset
     }
-    
-    Loop, Read, %MCdir%\minecraftpe\global_resource_packs.json     ; packActive? PACK_VERSION
-    {
-        if packActive
-        {
-            RegExMatch(A_LoopReadLine, "[0-9]+, [0-9]+, [0-9]+", PACK_VERSION)
-            PACK_VERSION := StrSplit(StrReplace(PACK_VERSION, A_Space, ""), ",")
-            PACK_VERSION := PACK_VERSION[1]*100+PACK_VERSION[2]*10+PACK_VERSION[3]
-            break
-        }
-        if InStr(A_LoopReadLine,"8eb36656-a7fe-4342-93e4-e443db3e8d3b")
-            packActive := true
-    }
 
-    if !packActive
-        MsgBox,, Warning, Fastest Resets Pack isn't activated.
+    adjustMinecraftSettings()
 }
 
 checkUpdates()
@@ -177,6 +163,8 @@ checkUpdates()
     req.WaitForResponse()
     latestVersions := StrSplit(req.ResponseText, ",")
 
+    ; Definitely wont need this anymore
+    ;
     ; idk if i should have this
     ; if (PACK_VERSION < latestVersions[2])
     ;     MsgBox,, Update,% "New Pack Update!`n" . PACK_VERSION . " => " . latestVersions[2]
@@ -242,4 +230,132 @@ writeAtLine(txtPath, atLine, string)
 
 Log(entry){
     FileAppend, %entry%`n, configs\logs.txt
+}
+
+loadButtons()
+{
+    Buttons := []
+    For k, btn in BUTTON_NAMES
+    {
+        IniRead, btnvar, %iniFile%, Buttons, %btn%
+        Buttons.push(StrSplit(btnvar,","))
+    }
+}
+
+;
+;   idk what this is im bored lol
+;
+
+SetupButtons()
+{
+    if currentButton
+        return
+
+    MsgBox % "Tab: Assign Button`n" "Shift + Esc: Finish Setup"
+
+    s := Func("finishSetup")
+    Hotkey, +Esc, % s
+    Hotkey, +Esc, On
+    s := Func("setButton")
+    Hotkey, Tab, % s
+    Hotkey, Tab, On
+
+    Run, shell:AppsFolder\Microsoft.MinecraftUWP_8wekyb3d8bbwe!App
+    currentButton := 1
+
+    global textMouseToolTip, textMouseColourTip, textButtonList
+    Gui, Setup:Show, % "x0 " . " y0" . " w" . A_ScreenWidth . " h" . A_ScreenHeight
+    Gui, Setup:Font, % "s" 25 " c" "FFFFFF" " q4", Mojangles
+    Gui, Setup:Add , Text, x0 y0 w350 h150 vtextMouseToolTip
+    Gui, Setup:Add , Text, x0 y0 w200 h100 vtextMouseColourTip
+    Gui, Setup:Add , Text, x0 y0 w550 h230 vtextButtonList
+    Gui, Setup:         +AlwaysOnTop -Border -Caption +LastFound +ToolWindow
+    Gui, Setup:Color  , 000001
+    WinSet, TransColor, 000001
+    Gui, Setup:Show   , x0 y0
+
+    global isShown := true
+    SetTimer, updateSetupWindow, 8
+    Gosub, updateTextButtonList
+
+    updateSetupWindow:
+        if (!WinActive("Minecraft") && isShown){
+            Gui, Setup:Hide
+            isShown := false
+        } else if (WinActive("Minecraft") && !isShown){
+            Gui, Setup:Maximize
+            isShown := true
+        }
+
+        Gosub, updateTextMouseTip
+    return
+
+    updateTextMouseTip:
+        MouseGetPos, mouseX, mouseY
+        getWinDimensions("Minecraft")
+        PixelGetColor, atMouseRawColour, mouseX, mouseY, RGB
+        Switch atMouseRawColour ;hover colour to unhover colour
+        {
+            case 0x218306: atMouseColour := 0xC6C6C6
+            case 0x43A01C: atMouseColour := 0xC6C6C6
+            case 0x177400: atMouseColour := 0x979797
+            case 0x025F00: atMouseColour := 0x404040
+            case 0x037300: atMouseColour := 0x7F7F7F
+            case 0xFFFFFF: atMouseColour := 0x4C4C4C
+            case 0x4E8836: atMouseColour := 0x808080
+            Default: atMouseColour := atMouseRawColour
+        }
+
+        GuiControl, Setup:Move, textMouseToolTip  , % "x" mouseX "y" mouseY
+        GuiControl, Setup:Move, textMouseColourTip, % "x" mouseX+135 "y" mouseY+75
+        Gui       , Setup:Font, % "s" 25 " q4" " c" atMouseColour, Mojangles
+        GuiControl, Setup:Font, textMouseColourTip
+        GuiControl, Setup:    , textMouseToolTip, % "X:" Floor(mouseX-winX) " Y:" Floor(mouseY-winY) "`nButton: " BUTTON_NAMES[currentButton] "`nColour: "
+        GuiControl, Setup:    , textMouseColourTip, % atMouseColour
+
+        if(mouseX < 600 && mouseY < 300)
+            GuiControl, Setup:Move, textButtonList, % "y" A_ScreenHeight-230
+        Else
+            GuiControl, Setup:Move, textButtonList, % "y" 0
+
+        if(mouseX < 200 && mouseY > 235 && mouseY < 275)
+        {
+            GuiControl, Setup:Move, textMouseToolTip  , % "x" 0 "y" A_ScreenHeight
+            GuiControl, Setup:Move, textMouseColourTip, % "x" 0 "y" A_ScreenHeight
+        }
+    return
+
+    updateTextButtonList:
+        loadButtons()
+        string := ""
+        For k, btn in BUTTON_NAMES
+        {
+            amount := 15-StrLen(btn)
+            filler := ""
+            Loop, %amount%
+                filler .= " "
+            string .= btn "" filler ": X:" Buttons[k][1] " Y:" Buttons[k][2] " Colour: " Buttons[k][3] "`n"
+        }
+        Gui       , Setup:Font, % "s" 15 " c" "FFFFFF" " q4", Consolas
+        GuiControl, Setup:Font, textButtonList
+        GuiControl, Setup:    , textButtonList, % string
+    return
+}
+
+setButton()
+{
+    IniWrite, % mouseX "," mouseY "," atMouseColour, %iniFile%, Buttons, % BUTTON_NAMES[currentButton]
+    currentButton += 1
+    Click
+    if(currentButton > BUTTON_NAMES.length())
+        finishSetup()
+}
+
+finishSetup()
+{
+    Gui, Setup:Destroy
+    currentButton := ""
+    Hotkey, +Esc, Off
+    Hotkey, Tab, Off
+    loadButtons()
 }

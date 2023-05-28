@@ -1,11 +1,10 @@
 # Fastest Resets
 ## Info
 * Supported Auto Resetting Versions: 1.2.13, 1.14.60, 1.16.0.51, 1.16.0.57, 1.16.0.58, 1.16.1, 1.16.10
-* The Resource Pack works between versions: 1.2.13 -> 1.19+
 
 * The timer will not be visibile if Minecraft is in fullscreen.
 
-* Keep the key delay at a minimum of 35ms (or 1000ms/Recording FPS) for verification purposes.
+* Keep the key delay at a minimum of 50ms for verification purposes.
 
 * You can change the alert.wav file or remove it, whether you want a sound to play on auto reset.
 
@@ -17,7 +16,7 @@
 
 2. Unzip and run "Fastest-Resets.ahk"
 
-3. Install the resource pack to assist the macro
+3. [Video](https://youtu.be/McyDSGNkbVU) for further steps
 
 
 Make sure you have the AHK 64-bit version installed, otherwise the macro would not be able to read the coords.

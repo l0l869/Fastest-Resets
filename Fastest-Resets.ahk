@@ -44,7 +44,7 @@ Gui, add, Edit    , y50 x175 w25 veditboxKeyDelay geditboxKeyDelay +Number -Mult
 Gui, add, Button  , y75 x175 w25 h25 gTimerSettings, ⚙️
 Gui, add, Checkbox, y80 x205 vcheckboxTimer gcheckboxTimer, Timer
 
-Gui, add, Button  , y110 x165 w150 h25 gInstallPack, Install Resource Pack 
+Gui, add, Button  , y110 x165 w150 h25 gSetup, Setup
 
 Gui, add, Button  , y140 x165 w150 h25 gOpenMCDir, MC Directory
 
@@ -60,18 +60,8 @@ loadConfigs()
 
 ; buttons
 
-InstallPack:
-    if FileExist(MCdir . "\resource_packs\FR-Pack")
-    {
-        MsgBox, Fastest Resets Pack already imported.
-    }
-    Else
-    {
-        FileOpen(MCdir . "\minecraftpe\global_resource_packs.json", "w").Write("[`n   {`n      ""pack_id"" : ""8eb36656-a7fe-4342-93e4-e443db3e8d3b"",`n      ""version"" : [ 2, 0, 0 ]`n   }`n]").Close()
-        FileCreateDir, %MCdir%\resource_packs\FR-Pack
-        FileCopyDir, %A_ScriptDir%\assets\FR-Pack, %MCdir%\resource_packs\FR-Pack, 1
-        Gosub, restartMC
-    }
+Setup:
+    SetupButtons()
 return
 
 OpenMCDir:
@@ -224,6 +214,12 @@ return
 
 editboxKeyDelay:
     GuiControlGet, valueKeyDelay,, editboxKeyDelay
+        shouldWarn := 10000 < A_TickCount-lastWarn
+        if (valueKeyDelay < 50 && shouldWarn)
+        {
+            lastWarn := A_TickCount
+            MsgBox, A key delay lower than 50ms is unverifiable
+        }
         IniWrite, %valueKeyDelay%, %iniFile%, Settings, keyDelay
         keyDelay := valueKeyDelay
 return

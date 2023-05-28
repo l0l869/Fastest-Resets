@@ -151,7 +151,7 @@ getWinDimensions(Window)
     WinGetPos, winX, winY, winWidth, winHeight, %Window%
     winScaling := A_ScreenDPI/96
     winX += 8*winScaling
-    winY += 30*winScaling
+    winY += 38*winScaling
     winWidth -= 16*winScaling
     winHeight -= 38*winScaling
     winX2 := winX+winWidth

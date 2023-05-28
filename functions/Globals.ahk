@@ -1,6 +1,5 @@
 ;===Script===
-global SCRIPT_VERSION := 20230512
-global PACK_VERSION := 200
+global SCRIPT_VERSION := 20230528
 global latestVersions
 global iniFile := A_ScriptDir . "\configs\configs.ini"
 global MCdir := LocalAppData . "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
@@ -41,6 +40,13 @@ global resetThreshold
 global keyDelay
 global keybindRestartMc
 global keybindReset
+
+;===Setup===
+global mouseX, mouseY
+global atMouseColour
+global currentButton
+global Buttons := []
+global BUTTON_NAMES := ["Heart","SaveAndQuit","CreateNew","CreateNewWorld","Normal","Easy","Coordinates","Simulation","Seed","Create"]
 
 ;===Stats===
 global runAttempts
@@ -85,6 +91,7 @@ global checkboxAutoRestart
         ;Keydelay
 global editboxKeyDelay
 ;global textDelay
+global lastWarn := 0
 
         ;Timer
 global checkboxTimer
