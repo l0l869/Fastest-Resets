@@ -105,6 +105,9 @@ inGameReset()
                             Send, {WheelDown}
                             Sleep, 1
                             PixelGetColor, isColourBTN, Buttons[7][1], Buttons[7][2], RGB
+                            
+                            if(A_Index > 50)
+                                break 3
                         }
 
                         MouseClick,, Buttons[7][1], Buttons[7][2],,0
