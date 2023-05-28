@@ -16,7 +16,7 @@
 
 2. Unzip and run "Fastest-Resets.ahk"
 
-3. TBD
+3. [Video](https://youtu.be/McyDSGNkbVU) for further steps
 
 
 Make sure you have the AHK 64-bit version installed, otherwise the macro would not be able to read the coords.
