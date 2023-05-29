@@ -100,31 +100,24 @@ inGameReset()
                         MouseClick,, Buttons[6][1], Buttons[6][2],,0
                         Sleep, %keyDelay%
 
-                        while(Buttons[7][3] != isColourBTN)
-                        {
-                            Send, {WheelDown}
-                            Sleep, 1
-                            PixelGetColor, isColourBTN, Buttons[7][1], Buttons[7][2], RGB
-                            
-                            if(A_Index > 50)
-                                break 3
-                        }
-
                         MouseClick,, Buttons[7][1], Buttons[7][2],,0
                         Sleep, %keyDelay%
+
                         MouseClick,, Buttons[8][1], Buttons[8][2],,0
+                        Sleep, %keyDelay%
+                        MouseClick,, Buttons[9][1], Buttons[9][2],,0
                         Sleep, %keyDelay%
 
                         if setSeed
                         {
-                            MouseClick,, Buttons[9][1], Buttons[9][2],,0
+                            MouseClick,, Buttons[10][1], Buttons[10][2],,0
                             Sleep, %keyDelay%
                             IniRead, selectedSeed, %iniFile%, Settings, selectedSeed
                             Send, %selectedSeed%
                             Sleep, %keyDelay%
                         }
 
-                        MouseClick,, Buttons[10][1], Buttons[10][2],,0
+                        MouseClick,, Buttons[11][1], Buttons[11][2],,0
                         MouseMove, winX+winWidth/2, winY+winHeight/2
                         Sleep, 500
                 }

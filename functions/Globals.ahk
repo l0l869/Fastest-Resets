@@ -46,7 +46,7 @@ global mouseX, mouseY
 global atMouseColour
 global currentButton
 global Buttons := []
-global BUTTON_NAMES := ["Heart","SaveAndQuit","CreateNew","CreateNewWorld","Normal","Easy","Coordinates","Simulation","Seed","Create"]
+global BUTTON_NAMES := ["Heart","SaveAndQuit","CreateNew","CreateNewWorld","Normal","Easy","ScrollBar","Coordinates","Simulation","Seed","Create"]
 
 ;===Stats===
 global runAttempts
