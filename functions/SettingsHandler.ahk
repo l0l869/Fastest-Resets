@@ -353,6 +353,7 @@ setButton()
 
 finishSetup()
 {
+    SetTimer, updateSetupWindow, Off
     Gui, Setup:Destroy
     currentButton := ""
     Hotkey, +Esc, Off
