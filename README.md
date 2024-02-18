@@ -1,4 +1,7 @@
 # Fastest Resets
+
+### Archived: go to [Multi-Resets](https://github.com/l0l869/Multi-Resets)
+
 ## Info
 * Supported Auto Resetting Versions: 1.2.13, 1.14.60, 1.16.0.51, 1.16.0.57, 1.16.0.58, 1.16.1, 1.16.10
 
